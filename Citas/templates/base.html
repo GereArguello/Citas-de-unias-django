@@ -1,0 +1,73 @@
+{% load static %} <!-- plantilla estática para el resto de archivos html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}App de uñas{% endblock %}</title> <!--Título de la pestaña-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <style>
+        .navbar-custom {
+            background-color: #008b46c4 !important; /* verde pastel */
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-custom py-0">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'inicio' %}">Pamegranart</a>
+                <a class="navbar-brand" href="{% url 'inicio' %}">
+                    <img src="{% static 'Pamegranart.png' %}" 
+                        alt="Pamegranart" 
+                        style="height:50px;">
+                </a>
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'inicio' %}">Inicio</a>
+                        <!-- url que queremos visitar // título -->
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'crear_cita' %}">Crear cita</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'lista_citas' %}">Lista de citas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'citas_completadas' %}">Citas completadas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'cerrar_sesion' %}">Cerrar sesión</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'registrarse' %}">Registrarse</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'iniciar_sesion' %}">Iniciar sesión</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+    </header>
+    {% if messages %}
+    {% for message in messages %}
+    <div>
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+
+    <main class="container mt-4">
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>
+
+</html>

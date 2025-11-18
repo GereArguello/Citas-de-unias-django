@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+
+
+<h2 class="display-5 text-center">
+    {% if tipo == "pendientes" %}
+    Lista de citas
+    {% else %}
+    Citas completadas
+    {% endif %}
+</h2>
+
+
+{% if lista %}
+{% for cita in lista %}
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <section class="card card-body mb-3">
+                <h2>{{ cita.nombre_clienta }}</h2>
+
+                <p>{{ cita.servicio }}</p>
+                <p>{{ cita.fecha }}</p>
+                <p>{{ cita.hora|time:"H:i" }}</p>
+                <p>{{ cita.comentario|default:"(sin comentario)" }}</p>
+
+                <p>Estado: {{ cita.estado|yesno:"realizada,pendiente" }}</p>
+                <div class="d-flex gap-2">
+
+                    {% if tipo == "pendientes" %}
+                    <!-- Botón verde (completar) -->
+                    <form action="{% url 'completar_cita' cita.id %}" method="POST" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success">
+                            ✅ Completar
+                        </button>
+                    </form>
+
+                    <!-- Botón amarillo (editar) -->
+                    <a href="{% url 'editar_cita' cita.id %}" 
+                    class="btn btn-warning">
+                        ✏️ Editar
+                    </a>
+                    {% endif %}
+
+                    <!-- Botón rojo (eliminar) -->
+                    <form action="{% url 'eliminar_cita' cita.id %}" method="POST" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger"
+                                onclick="return confirmarEliminacion()">
+                            🗑️ Eliminar
+                        </button>
+                    </form>
+
+                </div>
+            </section>
+        </div>
+    </div>
+{% endfor %}
+
+<script>
+    function confirmarEliminacion() {
+        return confirm("¿Estás seguro de que querés eliminar esta cita?");
+    }
+</script>
+
+{% else %}
+<p>No hay citas registradas aún.</p>
+</section>
+{% endif %}
+
+
+
+{% endblock %}
