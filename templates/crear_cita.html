@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Nueva cita{% endblock %} <!-- Título de la página -->
+
+{% block content %}
+
+
+<body>
+    <div class="row">
+        <div class="col-md-4 offset-md-4">
+            <h1 class="text-center">Agendar cita</h1>
+            <form method="POST" class="card card-body"> <!-- Método para aplicar un formulario -->
+                {% csrf_token %}
+                {{ form.as_p}} <!-- función asociada a views.py-->
+                <button type="submit">Guardar</button> <!-- Botón para guardarlo-->
+            </form>
+        </div>
+    </div>
+</body>
+
+
+{% endblock %}

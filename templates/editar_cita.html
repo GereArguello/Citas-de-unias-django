@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar cita{% endblock %}
+
+{% block content %}
+
+<body>
+    <div class="row">
+        <div class="col-md-4 offset-md-4">
+            <h1 class="text-center">Editar cita</h1>
+            <form method="POST" class="card card-body"> <!-- Método para aplicar un formulario -->
+                {% csrf_token %}
+                {{ form.as_p}} <!-- función asociada a views.py-->
+                <button type="submit">Editar</button> <!-- Botón para guardarlo-->
+            </form>
+        </div>
+    </div>
+</body>
+
+
+{% endblock %}
