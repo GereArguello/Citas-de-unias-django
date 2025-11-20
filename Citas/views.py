@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
+from django.db.models import Sum
 from .forms import CitaForm
 from .models import Cita
 
@@ -105,6 +106,11 @@ def lista_citas(request):
 
     return render(request,'lista_citas.html',{'lista': lista, 'tipo': 'pendientes'})
 
+@login_required
 def citas_completadas(request):
     lista = Cita.objects.filter(estado=True).order_by('-fecha')
-    return render(request,'lista_citas.html',{'lista': lista, 'tipo': 'completadas'})
+
+    total_completadas = Cita.objects.filter(estado=True).aggregate(
+        total=Sum('precio'))['total'] or 0
+    
+    return render(request,'lista_citas.html',{'lista': lista, 'tipo': 'completadas', 'total_completadas': total_completadas})

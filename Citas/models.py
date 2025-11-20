@@ -19,6 +19,7 @@ class Cita (models.Model):      #Creamos una tabla
 
     nombre_clienta = models.CharField(max_length=100)
     servicio = models.CharField(max_length=100, choices=SERVICIOS)
+    precio = models.IntegerField(null=True)
     fecha = models.DateField()
     hora = models.TimeField(choices=HORARIOS)
     comentario = models.TextField(blank=True, null=True)
