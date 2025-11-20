@@ -140,14 +140,15 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-if DEBUG:
-    STATICFILES_DIRS = [
-        BASE_DIR / "static",
-    ]
-else:
+# Esta línea debe estar SIEMPRE, tanto en local como producción
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+# Solo cambia el storage en producción
+if not DEBUG:
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 LOGIN_URL = '/iniciar_sesion/'
