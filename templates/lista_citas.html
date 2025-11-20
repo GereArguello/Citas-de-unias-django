@@ -21,19 +21,31 @@
     </h2>
 
     <!-- Tarjeta a la derecha -->
-    <div class="card p-2" style="width: 180px;">
+    <div class="card p-0 text-center" style="width: 280px;">
         <small class="text-muted">Ganancias</small>
         <h4 class="mb-0">${{ total_completadas }}</h4>
     </div>
 </div>
+
 {% endif %}
 
 
-{% if lista %}
+
+{% if lista and not tipo == "pendientes" %}
+<div id="filtros-flotantes" class="d-none d-md-block">
+    <div class="d-flex flex-column text-end" style="width: 200px; gap: 14px;">
+        <button class="btn btn-outline-primary btn-sm">Filtrar por semana</button>
+        <button class="btn btn-outline-primary btn-sm">Filtrar por mes</button>
+        <button class="btn btn-outline-primary btn-sm">Filtrar personalizado</button>
+    </div>
+</div>
+
 {% for cita in lista %}
-    <div class="row justify-content-center">
+
+    <div class="row justify-content-center align-items-start mb-3">
+        <!-- COLUMNA PRINCIPAL CENTRADA -->
         <div class="col-12 col-md-8 col-lg-5">
-            <section class="card card-body mb-3">
+            <section class="card card-body">
                 <h2> Nombre: {{ cita.nombre_clienta }}</h2>
 
                 <p> Servicio: {{ cita.servicio }}</p>
@@ -43,10 +55,10 @@
                 <p> Comentario: <br>{{ cita.comentario|default:"(sin comentario)" }}</p>
 
                 <p>Estado: {{ cita.estado|yesno:"realizada,pendiente" }}</p>
+
                 <div class="d-flex gap-2">
 
                     {% if tipo == "pendientes" %}
-                    <!-- Botón verde (completar) -->
                     <form action="{% url 'completar_cita' cita.id %}" method="POST" class="d-inline">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-success">
@@ -54,14 +66,11 @@
                         </button>
                     </form>
 
-                    <!-- Botón amarillo (editar) -->
-                    <a href="{% url 'editar_cita' cita.id %}" 
-                    class="btn btn-warning">
+                    <a href="{% url 'editar_cita' cita.id %}" class="btn btn-warning">
                         ✏️ Editar
                     </a>
                     {% endif %}
 
-                    <!-- Botón rojo (eliminar) -->
                     <form action="{% url 'eliminar_cita' cita.id %}" method="POST" class="d-inline">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger"
@@ -74,13 +83,9 @@
             </section>
         </div>
     </div>
+
 {% endfor %}
 
-<script>
-    function confirmarEliminacion() {
-        return confirm("¿Estás seguro de que querés eliminar esta cita?");
-    }
-</script>
 
 {% else %}
 <p>No hay citas registradas aún.</p>

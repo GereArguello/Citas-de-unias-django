@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}App de uñas{% endblock %}</title> <!--Título de la pestaña-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
     <style>
         .navbar-custom {
             background-color: #008b46c4 !important; /* verde pastel */
@@ -17,41 +18,54 @@
 
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-custom py-0">
+        <nav class="navbar navbar-expand-lg navbar-light navbar-custom">
             <div class="container">
-                <a class="navbar-brand" href="{% url 'inicio' %}">Pamegranart</a>
-                <a class="navbar-brand" href="{% url 'inicio' %}">
+
+                <!-- Marca -->
+                <a class="navbar-brand d-flex align-items-center" href="{% url 'inicio' %}">
                     <img src="{% static 'Pamegranart.png' %}" 
                         alt="Pamegranart" 
-                        style="height:50px;">
+                        style="height:50px; margin-right: 8px;">
+                    Pamegranart
                 </a>
-                <ul class="navbar-nav ms-auto">
-                    {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{% url 'inicio' %}">Inicio</a>
-                        <!-- url que queremos visitar // título -->
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{% url 'crear_cita' %}">Crear cita</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{% url 'lista_citas' %}">Lista de citas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{% url 'citas_completadas' %}">Citas completadas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{% url 'cerrar_sesion' %}">Cerrar sesión</a>
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{% url 'registrarse' %}">Registrarse</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{% url 'iniciar_sesion' %}">Iniciar sesión</a>
-                    </li>
-                    {% endif %}
-                </ul>
+
+                <!-- BOTÓN HAMBURGER (para PC cuando achicás la ventana y para móvil) -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContenido">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- MENÚ COLAPSABLE -->
+                <div class="collapse navbar-collapse" id="navbarContenido">
+
+                    <ul class="navbar-nav ms-auto">
+                        {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'inicio' %}">Inicio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'crear_cita' %}">Crear cita</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'lista_citas' %}">Lista de citas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'citas_completadas' %}">Citas completadas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'cerrar_sesion' %}">Cerrar sesión</a>
+                        </li>
+
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'registrarse' %}">Registrarse</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'iniciar_sesion' %}">Iniciar sesión</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+
+                </div>
             </div>
         </nav>
     </header>
@@ -64,10 +78,19 @@
     {% endif %}
 
 
-    <main class="container mt-4">
+    <main class="container mt-4 position-relative">
         {% block content %}
         {% endblock %}
     </main>
+
+    {% block extra_scripts %}
+    <script>
+    function confirmarEliminacion() {
+        return confirm("¿Estás seguro de que querés eliminar esta cita?");
+    }
+     </script>
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    {% endblock %}
 </body>
 
 </html>
