@@ -9,6 +9,8 @@ from django.db import IntegrityError
 from django.db.models import Sum
 from .forms import CitaForm
 from .models import Cita
+from .utils import semana_actual, mes_actual
+from datetime import date
 
 @login_required
 def index(request):
@@ -114,3 +116,63 @@ def citas_completadas(request):
         total=Sum('precio'))['total'] or 0
     
     return render(request,'lista_completadas.html',{'lista': lista, 'total': total_completadas})
+
+@login_required
+def filtrar_semana(request):
+    inicio, fin = semana_actual()
+
+    lista = Cita.objects.filter(
+        estado=True,
+        fecha__range=(inicio,fin)).order_by('-fecha')
+
+    total_semana = lista.aggregate(total=Sum('precio'))['total'] or 0
+
+    return render(request, 'lista_completadas.html',{
+        'lista': lista, 'total':total_semana, 'rango':(inicio, fin)
+    })
+
+@login_required
+def filtrar_mes(request):
+    inicio, fin = mes_actual()
+
+    lista = Cita.objects.filter(
+        estado=True,
+        fecha__range=(inicio,fin)).order_by('-fecha')
+    
+    total_mes = lista.aggregate(total=Sum('precio'))['total'] or 0
+
+    return render(request, 'lista_completadas.html',{
+        'lista': lista, 'total':total_mes, 'rango':(inicio, fin)
+    })
+
+@login_required
+def filtrar_personalizado(request):
+    inicio_str = request.GET.get('inicio')
+    fin_str = request.GET.get('fin')
+
+    # Si no hay fechas, redirige
+    if not (inicio_str and fin_str):
+        return redirect('citas_completadas')
+
+    # Convertir las fechas válidas
+    inicio = date.fromisoformat(inicio_str)
+    fin = date.fromisoformat(fin_str)
+
+    rango = (inicio, fin)
+
+    lista = Cita.objects.filter(
+        estado=True,
+        fecha__range=(inicio, fin)
+    ).order_by('-fecha')
+
+    total_personalizado = lista.aggregate(total=Sum('precio'))['total'] or 0
+
+    return render(
+        request,
+        'lista_completadas.html',
+        {
+            'lista': lista,
+            'total': total_personalizado,
+            'rango': rango
+        }
+    )

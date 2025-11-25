@@ -4,9 +4,13 @@
 
 <div class="contenedor"> 
     <h2 class="col-centro text-center">Citas completadas</h2>
-    <div class="ingresos-box">
-        <h5 class="col-derecha mt-1">Ingresos totales</h5>
-        <h6 class="col-derecha">${{ total }}</h6>
+
+    <div class="col-derecha ingresos-box">
+        <h5 class="mt-1">Ingresos totales</h5>
+        <h6>${{ total }}</h6>
+        {% if rango %}
+            <p>{{ rango.0|date:"d/m/y" }} - {{ rango.1|date:"d/m/y" }}</p>
+        {% endif %}
     </div>
 </div>
 
@@ -37,9 +41,24 @@
         <div class="col-derecha">
             {% if forloop.first %}
                 <div class="filtros-botones d-flex flex-column gap-3 mt-4">
-                    <button class="btn filtro-btn">Filtrar por semana</button>
-                    <button class="btn filtro-btn">Filtrar por mes</button>
-                    <button class="btn filtro-btn">Filtrar personalizado</button>
+                    <a href="{% url 'lista_semana' %}" class="btn filtro-btn"> Filtrar por semana </a>
+                    <a href="{% url 'lista_mes' %}" class="btn filtro-btn"> Filtrar por mes </a>
+                    <button class="btn filtro-btn" onclick="document.getElementById('form-personalizado').classList.toggle('d-none')"> 
+                        Filtrar personalizado 
+                    </button>
+
+                    <!-- FORMULARIO OCULTO -->
+                     <form id="form-personalizado" action="{% url 'lista_personalizada' %}" method="get" class="d-none d-flex flex-column gap-2 mt-2">
+                        <label for="inicio">Desde:</label>
+                        <input type="date" name="inicio" id="inicio" class="form-control">
+
+                        <label for="fin">Hasta:</label>
+                        <input type="date" name="fin" id="fin" class="form-control">
+
+                        <button type="submit" class="btn filtro-btn">
+                            Aplicar
+                        </button>
+                     </form>
                 </div>
             {% endif %}
         </div>
