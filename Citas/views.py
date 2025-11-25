@@ -104,7 +104,7 @@ def eliminar_cita(request, id):
 def lista_citas(request):
     lista = Cita.objects.filter(estado=False).order_by('fecha') #Llamamos todo el contenido de la tabla
 
-    return render(request,'lista_citas.html',{'lista': lista, 'tipo': 'pendientes'})
+    return render(request,'lista_citas.html',{'lista': lista})
 
 @login_required
 def citas_completadas(request):
@@ -113,4 +113,4 @@ def citas_completadas(request):
     total_completadas = Cita.objects.filter(estado=True).aggregate(
         total=Sum('precio'))['total'] or 0
     
-    return render(request,'lista_citas.html',{'lista': lista, 'tipo': 'completadas', 'total_completadas': total_completadas})
+    return render(request,'lista_completadas.html',{'lista': lista, 'total': total_completadas})

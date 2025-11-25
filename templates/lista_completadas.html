@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="contenedor"> 
+    <h2 class="col-centro text-center">Citas completadas</h2>
+    <div class="ingresos-box">
+        <h5 class="col-derecha mt-1">Ingresos totales</h5>
+        <h6 class="col-derecha">${{ total }}</h6>
+    </div>
+</div>
+
+{% if lista %}
+    {% for cita in lista %}
+    <div class="contenedor mb-4">
+
+        <!-- Columna central: siempre la card -->
+        <div class="col-centro">
+            <section class="cita-card">
+                <h4>Nombre: {{ cita.nombre_clienta }}</h4>
+                <p>Servicio: {{ cita.servicio }}</p>
+                <p>Precio: ${{ cita.precio }}</p>
+                <p>Día: {{ cita.fecha }}</p>
+                <p>Hora: {{ cita.hora|time:"H:i" }}</p>
+                <p>Comentario: <br>{{ cita.comentario|default:"(sin comentario)" }}</p>
+
+                <div class="d-flex gap-2">
+                    <form action="{% url 'eliminar_cita' cita.id %}" method="POST" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger" onclick="return confirmarEliminacion()">🗑️ Eliminar</button>
+                    </form>
+                </div>
+            </section>
+        </div>
+
+        <!-- Columna derecha: solo aparece en la primera cita -->
+        <div class="col-derecha">
+            {% if forloop.first %}
+                <div class="filtros-botones d-flex flex-column gap-3 mt-4">
+                    <button class="btn filtro-btn">Filtrar por semana</button>
+                    <button class="btn filtro-btn">Filtrar por mes</button>
+                    <button class="btn filtro-btn">Filtrar personalizado</button>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+    {% endfor %}
+
+{% else %}
+    <p class="text-center">No hay citas registradas aún.</p>
+{% endif %}
+
+{% endblock %}
