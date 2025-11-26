@@ -11,3 +11,6 @@ python manage.py collectstatic --no-input
 
 # Apply any outstanding database migrations
 python manage.py migrate 
+
+echo "Creating superuser if it doesn't exist..."
+python manage.py createsuperuser --no-input || true
