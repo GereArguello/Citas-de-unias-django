@@ -4,14 +4,15 @@
 
 <div class="contenedor"> 
     <h2 class="col-centro text-center">Citas completadas</h2>
-
-    <div class="col-derecha ingresos-box">
-        <h5 class="mt-1">Ingresos totales</h5>
-        <h6>${{ total }}</h6>
-        {% if rango %}
-            <p>{{ rango.0|date:"d/m/y" }} - {{ rango.1|date:"d/m/y" }}</p>
-        {% endif %}
-    </div>
+    {% if request.user.is_superuser %}
+        <div class="col-derecha ingresos-box">
+                <h5 class="mt-1">Ingresos totales</h5>
+                <h6>${{ total }}</h6>
+                {% if rango %}
+                    <p>{{ rango.0|date:"d/m/y" }} - {{ rango.1|date:"d/m/y" }}</p>
+                {% endif %}
+        </div>
+    {% endif %}
 </div>
 
 {% if lista %}
@@ -27,39 +28,42 @@
                 <p>Día: {{ cita.fecha }}</p>
                 <p>Hora: {{ cita.hora|time:"H:i" }}</p>
                 <p>Comentario: <br>{{ cita.comentario|default:"(sin comentario)" }}</p>
-
-                <div class="d-flex gap-2">
-                    <form action="{% url 'eliminar_cita' cita.id %}" method="POST" class="d-inline">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger" onclick="return confirmarEliminacion()">🗑️ Eliminar</button>
-                    </form>
-                </div>
+                {% if request.user.is_superuser %}
+                    <div class="d-flex gap-2">
+                        <form action="{% url 'eliminar_cita' cita.id %}" method="POST" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger" onclick="return confirmarEliminacion()">🗑️ Eliminar</button>
+                        </form>
+                    </div>
+                {% endif %}
             </section>
         </div>
 
         <!-- Columna derecha: solo aparece en la primera cita -->
         <div class="col-derecha">
-            {% if forloop.first %}
-                <div class="filtros-botones d-flex flex-column gap-3 mt-4">
-                    <a href="{% url 'lista_semana' %}" class="btn filtro-btn"> Filtrar por semana </a>
-                    <a href="{% url 'lista_mes' %}" class="btn filtro-btn"> Filtrar por mes </a>
-                    <button class="btn filtro-btn" onclick="document.getElementById('form-personalizado').classList.toggle('d-none')"> 
-                        Filtrar personalizado 
-                    </button>
-
-                    <!-- FORMULARIO OCULTO -->
-                     <form id="form-personalizado" action="{% url 'lista_personalizada' %}" method="get" class="d-none d-flex flex-column gap-2 mt-2">
-                        <label for="inicio">Desde:</label>
-                        <input type="date" name="inicio" id="inicio" class="form-control">
-
-                        <label for="fin">Hasta:</label>
-                        <input type="date" name="fin" id="fin" class="form-control">
-
-                        <button type="submit" class="btn filtro-btn">
-                            Aplicar
+            {% if request.user.is_superuser %}
+                {% if forloop.first %}
+                    <div class="filtros-botones d-flex flex-column gap-3 mt-4">
+                        <a href="{% url 'lista_semana' %}" class="btn filtro-btn"> Filtrar por semana </a>
+                        <a href="{% url 'lista_mes' %}" class="btn filtro-btn"> Filtrar por mes </a>
+                        <button class="btn filtro-btn" onclick="document.getElementById('form-personalizado').classList.toggle('d-none')"> 
+                            Filtrar personalizado 
                         </button>
-                     </form>
-                </div>
+
+                        <!-- FORMULARIO OCULTO -->
+                        <form id="form-personalizado" action="{% url 'lista_personalizada' %}" method="get" class="d-none d-flex flex-column gap-2 mt-2">
+                            <label for="inicio">Desde:</label>
+                            <input type="date" name="inicio" id="inicio" class="form-control">
+
+                            <label for="fin">Hasta:</label>
+                            <input type="date" name="fin" id="fin" class="form-control">
+
+                            <button type="submit" class="btn filtro-btn">
+                                Aplicar
+                            </button>
+                        </form>
+                    </div>
+                {% endif %}
             {% endif %}
         </div>
 

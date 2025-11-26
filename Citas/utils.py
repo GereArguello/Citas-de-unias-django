@@ -19,3 +19,11 @@ def mes_actual():
     return inicio_mes, fin_mes
 
 
+from .models import Cita
+
+def citas_para_usuario(user):
+    if user.is_superuser:
+        return Cita.objects.all()
+    return Cita.objects.filter(user=user)
+
+

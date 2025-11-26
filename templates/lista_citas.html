@@ -14,13 +14,15 @@
                     <p>Precio: ${{ cita.precio }}</p>
                     <p>Día: {{ cita.fecha }}</p>
                     <p>Hora: {{ cita.hora|time:"H:i" }}</p>
-                    <p>Comentario: <br>{{ cita.comentario|default:"(sin comentario)" }}</p>
+                    <p>Comentario: <br>{{ cita.comentario|default:"-" }}</p>
 
                     <div class="d-flex gap-2">
+                        {% if request.user.is_superuser %}
                         <form action="{% url 'completar_cita' cita.id %}" method="POST" class="d-inline">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-success">✅ Completar</button>
                         </form>
+                        {% endif %}
                             <a href="{% url 'editar_cita' cita.id %}" class="btn btn-warning">✏️ Editar</a>
                         <form action="{% url 'eliminar_cita' cita.id %}" method="POST" class="d-inline">
                             {% csrf_token %}

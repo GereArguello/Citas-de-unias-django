@@ -7,12 +7,12 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from .forms import CitaForm
 from .models import Cita
-from .utils import semana_actual, mes_actual
+from .utils import semana_actual, mes_actual, citas_para_usuario
 from datetime import date
 
 @login_required
 def index(request):
-    return render(request, 'inicio.html')
+    return render(request, 'inicio.html', {'user': request.user})
 
 def registrarse(request):
     if request.method == 'GET':
@@ -85,14 +85,18 @@ def editar_cita(request, id):
 @login_required
 @require_POST
 def completar_cita(request, id):
-    cita = get_object_or_404(Cita, id=id, user=request.user)
-    cita.estado = True
-    cita.save()
+    if request.user.is_superuser:
+        cita = get_object_or_404(Cita, id=id)
+        cita.estado = True
+        cita.save()
     return redirect('lista_citas')
 
 @login_required
 def eliminar_cita(request, id):
-    cita = get_object_or_404(Cita, id=id, user=request.user)
+    if request.user.is_superuser:
+        cita = get_object_or_404(Cita, id=id)
+    else:
+        cita = get_object_or_404(Cita, id=id, user=request.user)
 
     if request.method == 'POST':
         estado_original = cita.estado
@@ -105,15 +109,15 @@ def eliminar_cita(request, id):
 
 @login_required
 def lista_citas(request):
-    lista = Cita.objects.filter(estado=False, user=request.user).order_by('fecha') #Llamamos todo el contenido de la tabla
+    lista = citas_para_usuario(request.user).filter(estado=False).order_by('fecha') #Llamamos todo el contenido de la tabla
 
     return render(request,'lista_citas.html',{'lista': lista})
 
 @login_required
 def citas_completadas(request):
-    lista = Cita.objects.filter(estado=True, user=request.user).order_by('-fecha')
+    lista = citas_para_usuario(request.user).filter(estado=True).order_by('-fecha')
 
-    total_completadas = Cita.objects.filter(estado=True, user=request.user).aggregate(
+    total_completadas = lista.aggregate(
         total=Sum('precio'))['total'] or 0
     
     return render(request,'lista_completadas.html',{'lista': lista, 'total': total_completadas})
@@ -122,9 +126,9 @@ def citas_completadas(request):
 def filtrar_semana(request):
     inicio, fin = semana_actual()
 
-    lista = Cita.objects.filter(
+    lista = citas_para_usuario(request.user).filter(
         estado=True,
-        fecha__range=(inicio,fin), user=request.user).order_by('-fecha')
+        fecha__range=(inicio,fin)).order_by('-fecha')
 
     total_semana = lista.aggregate(total=Sum('precio'))['total'] or 0
 
@@ -136,9 +140,9 @@ def filtrar_semana(request):
 def filtrar_mes(request):
     inicio, fin = mes_actual()
 
-    lista = Cita.objects.filter(
+    lista = citas_para_usuario(request.user).filter(
         estado=True,
-        fecha__range=(inicio,fin), user=request.user).order_by('-fecha')
+        fecha__range=(inicio,fin)).order_by('-fecha')
     
     total_mes = lista.aggregate(total=Sum('precio'))['total'] or 0
 
@@ -161,9 +165,9 @@ def filtrar_personalizado(request):
 
     rango = (inicio, fin)
 
-    lista = Cita.objects.filter(
+    lista = citas_para_usuario(request.user).filter(
         estado=True,
-        fecha__range=(inicio, fin), user=request.user
+        fecha__range=(inicio, fin)
     ).order_by('-fecha')
 
     total_personalizado = lista.aggregate(total=Sum('precio'))['total'] or 0
