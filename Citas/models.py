@@ -1,5 +1,5 @@
 from django.db import models
-#from django.contrib.auth.models import User -
+from django.contrib.auth.models import User
 #con esto podemos asignar la cita a un usuario 
 import datetime
 
@@ -24,7 +24,7 @@ class Cita (models.Model):      #Creamos una tabla
     hora = models.TimeField(choices=HORARIOS)
     comentario = models.TextField(blank=True, null=True)
     estado = models.BooleanField(default=False)
-    #user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null= True, blank= True)
 
     def __str__(self): #Forma de representarlo como administrador
         return f"{self.nombre_clienta} - {self.servicio} ({self.fecha.strftime('%d/%m')} - {self.hora.strftime('%H:%M')})"

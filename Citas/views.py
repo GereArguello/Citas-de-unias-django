@@ -2,10 +2,8 @@ from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from django.db import IntegrityError
 from django.db.models import Sum
 from .forms import CitaForm
 from .models import Cita
@@ -61,7 +59,9 @@ def crear_cita(request):
     if request.method == "POST": #El método es el mismo que HTML
         form = CitaForm(request.POST) #Variable que contiene el formulario
         if form.is_valid():
-            form.save()
+            cita = form.save(commit=False) #Crear cita sin guardar
+            cita.user = request.user #Asignar dueño
+            cita.save()
             return redirect('lista_citas')
     else:
         form = CitaForm()
@@ -70,7 +70,7 @@ def crear_cita(request):
 
 @login_required
 def editar_cita(request, id):
-    cita = get_object_or_404(Cita, id=id)
+    cita = get_object_or_404(Cita, id=id, user=request.user)
 
     if request.method == 'POST':
         form = CitaForm(request.POST, instance=cita) #instance para editar un objeto existente
@@ -85,34 +85,35 @@ def editar_cita(request, id):
 @login_required
 @require_POST
 def completar_cita(request, id):
-    cita = get_object_or_404(Cita, id=id)
+    cita = get_object_or_404(Cita, id=id, user=request.user)
     cita.estado = True
     cita.save()
     return redirect('lista_citas')
 
 @login_required
 def eliminar_cita(request, id):
-    cita = get_object_or_404(Cita, id=id)
+    cita = get_object_or_404(Cita, id=id, user=request.user)
 
     if request.method == 'POST':
+        estado_original = cita.estado
         cita.delete()
         messages.success(request,"✅ La cita fue eliminada con éxito.")
-        if cita.estado == False:
+        if not estado_original:
             return redirect('lista_citas')
         else:
             return redirect('citas_completadas')
 
 @login_required
 def lista_citas(request):
-    lista = Cita.objects.filter(estado=False).order_by('fecha') #Llamamos todo el contenido de la tabla
+    lista = Cita.objects.filter(estado=False, user=request.user).order_by('fecha') #Llamamos todo el contenido de la tabla
 
     return render(request,'lista_citas.html',{'lista': lista})
 
 @login_required
 def citas_completadas(request):
-    lista = Cita.objects.filter(estado=True).order_by('-fecha')
+    lista = Cita.objects.filter(estado=True, user=request.user).order_by('-fecha')
 
-    total_completadas = Cita.objects.filter(estado=True).aggregate(
+    total_completadas = Cita.objects.filter(estado=True, user=request.user).aggregate(
         total=Sum('precio'))['total'] or 0
     
     return render(request,'lista_completadas.html',{'lista': lista, 'total': total_completadas})
@@ -123,7 +124,7 @@ def filtrar_semana(request):
 
     lista = Cita.objects.filter(
         estado=True,
-        fecha__range=(inicio,fin)).order_by('-fecha')
+        fecha__range=(inicio,fin), user=request.user).order_by('-fecha')
 
     total_semana = lista.aggregate(total=Sum('precio'))['total'] or 0
 
@@ -137,7 +138,7 @@ def filtrar_mes(request):
 
     lista = Cita.objects.filter(
         estado=True,
-        fecha__range=(inicio,fin)).order_by('-fecha')
+        fecha__range=(inicio,fin), user=request.user).order_by('-fecha')
     
     total_mes = lista.aggregate(total=Sum('precio'))['total'] or 0
 
@@ -162,7 +163,7 @@ def filtrar_personalizado(request):
 
     lista = Cita.objects.filter(
         estado=True,
-        fecha__range=(inicio, fin)
+        fecha__range=(inicio, fin), user=request.user
     ).order_by('-fecha')
 
     total_personalizado = lista.aggregate(total=Sum('precio'))['total'] or 0
