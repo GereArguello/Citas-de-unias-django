@@ -81,6 +81,10 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries': {
+                # nombre que usás en el template  → ruta al módulo
+                'disponibilidad': 'Citas.templatetags.disponibilidad',
+            },
         },
     },
 ]

@@ -11,7 +11,7 @@
             <form method="POST" class="card card-body"> <!-- Método para aplicar un formulario -->
                 {% csrf_token %}
                 {{ form.as_p}} <!-- función asociada a views.py-->
-                <button type="submit">Editar</button> <!-- Botón para guardarlo-->
+                <button type="submit" class="btn btn-primary">Editar</button> <!-- Botón para guardarlo-->
             </form>
         </div>
     </div>

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load disponibilidad %}
+
+{% block title %} Calendario {% endblock %}
+
+{% block content %}
+
+
+<div class="row mb-4">
+    <div class="col-md-4 offset-md-4">
+        <form method="get" class="d-flex flex-column gap-2 mt-2">
+
+            <label for="mes">Mes:</label>
+            <select name="mes" id="mes" class="form-control">
+                {% for numero, nombre in meses %}
+                    <option value="{{ numero }}" {% if mes == numero %} selected {% endif %}> 
+                        {{ nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <label for="año">Año:</label>
+            <input type="number" name="año" id="año" class="form-control" value="{{año}}", min="2025", max="2040" >
+
+            <div class="text-center">
+                <button type="submit" class="btn filtro-btn">Aplicar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row text-center">
+    <div class="col-md-8 offset-md-2">
+        <table class="calendario">
+            <thead>
+                <tr>
+                    <th>Lun</th>
+                    <th>Mar</th>
+                    <th>Mié</th>
+                    <th>Jue</th>
+                    <th>Vie</th>
+                    <th>Sáb</th>
+                    <th>Dom</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for semana in semanas %}
+                    <tr>
+                        {% for dia in semana %}                           
+                        <td>
+                            {% if dia == 0 %}
+                                <div class= "dia dia-vacio"> </div>
+                            {% else %}
+                                <div class="dia">
+                                    <div class="numero">{{ dia }}</div>
+                                    {% for hora, texto in opciones %}
+                                        <div class="horarios">
+                                            {% es_ocupado año mes dia hora ocupadas as ocupado %}
+                                            {% if ocupado %}
+                                                <p> ❌ </p>
+                                            {% else %}
+                                                <p> {{ texto }}</p>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -93,6 +93,61 @@
     padding-left: 30px;
 }
 
+.calendario {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    border-collapse: collapse;
+    table-layout: fixed; 
+}
+
+/* Bordes iguales para todo */
+.calendario th {
+    border: 1px solid #000000;
+    box-shadow: 0 1px 1px rgba(38, 122, 45, 0.7) !important;
+    padding: 0;
+    color: rgba(37, 131, 255, 0.788)
+}
+
+.calendario td {
+    border: 1px solid #005e0c;
+    box-shadow: 0 2px 2px rgba(38, 122, 45, 0.7) !important;
+    padding: 0;
+    height: 80px;
+}
+
+/* El contenido interno no debe aportar tamaño extra */
+.dia {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    border: none;       /* ← MUY IMPORTANTE */
+}
+
+.dia-vacio {
+    background-color: #ebebeb49;
+    height: 100%;
+    width: 100%;
+}
+
+.numero {
+    font-weight: bold;
+    margin: 0;
+}
+
+.horarios {
+    display: flex;
+    flex-direction: column;
+}
+
+.horarios p {
+    font-size: 0.8rem;
+    font-style: italic;
+    margin-bottom: 3px;
+    color: rgba(17, 54, 0, 0.788)
+    
+}
+
 /* Mobile */
 @media (max-width: 768px) {
 
@@ -121,3 +176,4 @@
         width: fit-content; /* ajusta al contenido */
     }
 }
+

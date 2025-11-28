@@ -26,4 +26,6 @@ def citas_para_usuario(user):
         return Cita.objects.all()
     return Cita.objects.filter(user=user)
 
+def generar_calendario(año, mes):
+    return calendar.monthcalendar(año, mes)
 

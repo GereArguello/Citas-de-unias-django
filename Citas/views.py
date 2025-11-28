@@ -7,8 +7,9 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from .forms import CitaForm
 from .models import Cita
-from .utils import semana_actual, mes_actual, citas_para_usuario
+from .utils import semana_actual, mes_actual, citas_para_usuario, generar_calendario
 from datetime import date
+import calendar
 
 @login_required
 def index(request):
@@ -70,7 +71,10 @@ def crear_cita(request):
 
 @login_required
 def editar_cita(request, id):
-    cita = get_object_or_404(Cita, id=id, user=request.user)
+    if request.user.is_superuser:
+        cita = get_object_or_404(Cita, id=id)
+    else:
+        cita = get_object_or_404(Cita, id=id, user=request.user)
 
     if request.method == 'POST':
         form = CitaForm(request.POST, instance=cita) #instance para editar un objeto existente
@@ -181,3 +185,38 @@ def filtrar_personalizado(request):
             'rango': rango
         }
     )
+    
+@login_required
+def calendario(request):
+    meses = [(1, "Enero"),(2, "Febrero"),(3, "Marzo"),(4, "Abril"),
+    (5, "Mayo"),(6, "Junio"),(7, "Julio"),(8, "Agosto"),
+    (9, "Septiembre"),(10, "Octubre"),(11, "Noviembre"),(12, "Diciembre"),]
+    
+    opciones = Cita.HORARIOS
+    
+    mes = request.GET.get("mes")
+    año = request.GET.get("año")
+    
+    if not mes or not año:
+        hoy = date.today()
+        mes = hoy.month
+        año = hoy.year
+    else:
+        mes = int(mes)
+        año = int(año)
+
+    año = max(2025,min(año,2040))
+        
+    inicio_mes = date(año, mes, 1)
+    ultimo_dia = calendar.monthrange(año, mes)[1]
+    fin_del_mes = date(año, mes, ultimo_dia)
+    citas_del_mes = Cita.objects.filter(fecha__range=(inicio_mes,fin_del_mes))
+
+    ocupadas = {}
+    
+    for cita in citas_del_mes:
+        ocupadas[(cita.fecha, cita.hora)] = True
+        
+    semanas = generar_calendario(año, mes)
+    
+    return render(request,'calendario.html',{'semanas': semanas, 'mes': mes, 'año': año, 'meses': meses, 'opciones': opciones, 'ocupadas': ocupadas})

@@ -53,9 +53,11 @@
                             <a class="nav-link" href="{% url 'citas_completadas' %}">Citas completadas</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="{% url 'calendario' %}">Calendario</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="{% url 'cerrar_sesion' %}">Cerrar sesión</a>
                         </li>
-
                         {% else %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'registrarse' %}">Registrarse</a>
@@ -79,7 +81,7 @@
     {% endif %}
 
 
-    <main class="container mt-4 position-relative">
+    <main class="container mt-2 position-relative">
         {% block content %}
         {% endblock %}
     </main>
