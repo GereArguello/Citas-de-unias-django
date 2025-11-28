@@ -103,3 +103,18 @@ Este sistema es una base sólida para expandirse hacia:
 ![Lista Superuser](static/Lista_superuser.png)
 ![Completadas](static/Completadas.png)
 ![Calendario](static/Calendario.png)
+
+🧑‍💻 Instalación (local)
+git clone https://github.com/usuario/Citas-de-unias-django
+cd Citas-de-unias-django
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+
+📄 Licencia
+
+Proyecto personal — libre para uso educativo.
+
+👤 Autor
+
+Proyecto desarrollado por Geremías Arguello, como parte de su proceso de formación profesional en desarrollo web backend con Python + Django.
