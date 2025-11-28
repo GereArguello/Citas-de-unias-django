@@ -105,11 +105,11 @@ Este sistema es una base sólida para expandirse hacia:
 ![Calendario](static/Calendario.png)
 
 🧑‍💻 Instalación (local)
-git clone https://github.com/usuario/Citas-de-unias-django
-cd Citas-de-unias-django
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py runserver
+- git clone https://github.com/usuario/Citas-de-unias-django
+- cd Citas-de-unias-django
+- pip install -r requirements.txt
+- python manage.py migrate
+- python manage.py runserver
 
 📄 Licencia
 
