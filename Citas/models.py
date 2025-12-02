@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 #con esto podemos asignar la cita a un usuario 
 import datetime
 
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 class Cita (models.Model):      #Creamos una tabla
     SERVICIOS = [
         ('Manicura', 'Manicura'), #Lista de tuplas, (como lo ves, como lo ven)
@@ -28,3 +31,15 @@ class Cita (models.Model):      #Creamos una tabla
 
     def __str__(self): #Forma de representarlo como administrador
         return f"{self.nombre_clienta} - {self.servicio} ({self.fecha.strftime('%d/%m')} - {self.hora.strftime('%H:%M')})"
+    
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    telefono = models.CharField(max_length=20, blank=True, null=True)
+
+    def __str__(self):
+        return self.user.username
+    
+@receiver(post_save, sender=User)
+def crear_o_actualizar_profile(sender, instance, created, **kwargs):
+    Profile.objects.get_or_create(user=instance)
+

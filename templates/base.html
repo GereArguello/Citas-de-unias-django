@@ -21,14 +21,15 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-light navbar-custom">
             <div class="container">
-
+                <div class="d-flex align-items-center">
                 <!-- Marca -->
-                <a class="navbar-brand d-flex align-items-center" href="{% url 'inicio' %}">
-                    <img src="{% static 'Pamegranart.png' %}" 
-                        alt="Pamegranart" 
-                        style="height:50px; margin-right: 8px;">
-                    Pamegranart
-                </a>
+                    <a class="navbar-brand" href="{% url 'inicio' %}" style="margin-right: 2px;">
+                        <img src="{% static 'Pamegranart.png' %}" 
+                            alt="Pamegranart" 
+                            style="height:55px;">
+                    </a>
+                    <a class="nav-link" href="{% url 'mi_perfil'%}"> Mi perfil </a>
+                </div>
 
                 <!-- BOTÓN HAMBURGER (para PC cuando achicás la ventana y para móvil) -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContenido">

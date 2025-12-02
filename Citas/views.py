@@ -6,7 +6,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from .forms import CitaForm
-from .models import Cita
+from .models import Cita, Profile
 from .utils import semana_actual, mes_actual, citas_para_usuario, generar_calendario
 from datetime import date
 import calendar
@@ -14,6 +14,13 @@ import calendar
 @login_required
 def index(request):
     return render(request, 'inicio.html', {'user': request.user})
+
+@login_required
+def mi_perfil(request):
+    usuario = request.user
+    profile, created = Profile.objects.get_or_create(user=usuario)
+    total_citas = Cita.objects.filter(estado=True, user=request.user).count()
+    return render(request,'mi_perfil.html',{'usuario': usuario, 'profile': profile, 'total_citas': total_citas})
 
 def registrarse(request):
     if request.method == 'GET': #Si el request pide datos:

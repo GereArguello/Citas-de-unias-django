@@ -7,6 +7,7 @@ urlpatterns = [
     path('registrarse/', views.registrarse, name='registrarse'),
     path('cerrar_sesion/', views.cerrar_sesion, name='cerrar_sesion'),
     path('iniciar_sesion/',views.iniciar_sesion, name= 'iniciar_sesion'),
+    path('mi_perfil/',views.mi_perfil, name= 'mi_perfil'),
 
     path('crear_cita/', views.crear_cita, name='crear_cita'),
     path('editar_cita/<int:id>/',views.editar_cita, name='editar_cita'),

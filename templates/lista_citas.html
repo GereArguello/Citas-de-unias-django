@@ -16,7 +16,7 @@
                     <p>Precio: ${{ cita.precio }}</p>
                     <p>Día: {{ cita.fecha }}</p>
                     <p>Hora: {{ cita.hora|time:"H:i" }}</p> <!-- H(formato de 24 horas), i(minutos en 2 dígitos)-->
-                    <p>Comentario: <br>{{ cita.comentario|default:"-" }}</p>
+                    <p>Comentario: <br>{{ cita.comentario|default:"--" }}</p>
 
                     <div class="d-flex gap-2">
                         {% if request.user.is_superuser %} <!-- Solo un superusuario puede completar cita-->
