@@ -101,6 +101,7 @@
     table-layout: fixed; 
 }
 
+
 /* Bordes iguales para todo */
 .calendario th {
     border: 1px solid #000000;
@@ -113,7 +114,7 @@
     border: 1px solid #005e0c;
     box-shadow: 0 2px 2px rgba(38, 122, 45, 0.7) !important;
     padding: 0;
-    height: 80px;
+    height: 110px;
 }
 
 /* El contenido interno no debe aportar tamaño extra */

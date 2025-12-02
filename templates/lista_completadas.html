@@ -8,11 +8,14 @@
     <h2 class="col-centro text-center">Citas completadas</h2>
     {% if request.user.is_superuser %}
         <div class="col-derecha ingresos-box">
-                <h5 class="mt-1">Ingresos totales</h5>
+        {% if rango %}
+            <h5 class="mt-1"> Ingresos totales</h5>
                 <h6>${{ total }}</h6>
-                {% if rango %}
-                    <p>{{ rango.0|date:"d/m/y" }} - {{ rango.1|date:"d/m/y" }}</p>
-                {% endif %}
+                    <p>{{ rango.0|date:"d/m/y" }} - {{ rango.1|date:"d/m/y" }}</p> <!-- d/m/y son formatos en 2 dígitos-->
+        {% else %}
+            <h5 class="mt-1"> Ingresos del día </h5>
+                <h6>${{ total }}</h6>
+        {% endif %}
         </div>
     {% endif %}
 </div>
@@ -41,31 +44,10 @@
             </section>
         </div>
 
-        <!-- Columna derecha: solo aparece en la primera cita -->
+        <!-- Columna derecha contiene los botones de filtros -->
         <div class="col-derecha">
-            {% if request.user.is_superuser %}
-                {% if forloop.first %}
-                    <div class="filtros-botones d-flex flex-column gap-3 mt-4">
-                        <a href="{% url 'lista_semana' %}" class="btn filtro-btn"> Filtrar por semana </a>
-                        <a href="{% url 'lista_mes' %}" class="btn filtro-btn"> Filtrar por mes </a>
-                        <button class="btn filtro-btn" onclick="document.getElementById('form-personalizado').classList.toggle('d-none')"> 
-                            Filtrar personalizado 
-                        </button>
-
-                        <!-- FORMULARIO OCULTO -->
-                        <form id="form-personalizado" action="{% url 'lista_personalizada' %}" method="get" class="d-none d-flex flex-column gap-2 mt-2">
-                            <label for="inicio">Desde:</label>
-                            <input type="date" name="inicio" id="inicio" class="form-control">
-
-                            <label for="fin">Hasta:</label>
-                            <input type="date" name="fin" id="fin" class="form-control">
-
-                            <button type="submit" class="btn filtro-btn">
-                                Aplicar
-                            </button>
-                        </form>
-                    </div>
-                {% endif %}
+            {% if forloop.first %}
+                {% include 'includes/filtro_completadas.html' %}
             {% endif %}
         </div>
 
@@ -73,7 +55,16 @@
     {% endfor %}
 
 {% else %}
-    <p class="text-center">No hay citas registradas aún.</p>
+    <div class="contenedor mb-4">
+        <div class="col-centro">
+            <p class="text-center">No hay citas registradas aún.</p>
+        </div>
+        <div class="col-derecha">
+        {% if request.user.is_superuser %}
+            {% include 'includes/filtro_completadas.html' %}
+        {% endif %}           
+        </div>
+    </div>
 {% endif %}
 
 {% endblock %}

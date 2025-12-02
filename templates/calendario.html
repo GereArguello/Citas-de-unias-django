@@ -13,9 +13,7 @@
             <label for="mes">Mes:</label>
             <select name="mes" id="mes" class="form-control">
                 {% for numero, nombre in meses %}
-                    <option value="{{ numero }}" {% if mes == numero %} selected {% endif %}> 
-                        {{ nombre }}
-                    </option>
+                    <option value="{{ numero }}" {% if mes == numero %} selected {% endif %}> {{ nombre }} </option> <!-- Marca como seleccionado el mes actual-->
                 {% endfor %}
             </select>
 
@@ -51,20 +49,25 @@
                         <td>
                             {% if dia == 0 %}
                                 <div class= "dia dia-vacio"> </div>
-                            {% else %}
-                                <div class="dia">
-                                    <div class="numero">{{ dia }}</div>
-                                    {% for hora, texto in opciones %}
-                                        <div class="horarios">
-                                            {% es_ocupado año mes dia hora ocupadas as ocupado %}
-                                            {% if ocupado %}
-                                                <p> ❌ </p>
-                                            {% else %}
-                                                <p> {{ texto }}</p>
-                                            {% endif %}
-                                        </div>
-                                    {% endfor %}
-                                </div>
+                            {% else %}   
+                                {% es_pasado año mes dia as pasado %} <!-- LLamna al tag que verifica si la fecha es del pasado -->
+                                {% if pasado %}  
+                                    <div class= "dia dia-vacio"> </div>     
+                                {% else %}          
+                                    <div class="dia">
+                                        <div class="numero">{{ dia }}</div>
+                                        {% for hora, texto in opciones %}
+                                            <div class="horarios">
+                                                {% es_ocupado año mes dia hora ocupadas as ocupado %} <!-- Llama al tag que verifica si (fecha, hora) está en el diccionario 'ocupadas' -->
+                                                {% if ocupado %}
+                                                    <p> ❌ </p>
+                                                {% else %}
+                                                    <p> {{ texto }}</p>
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                             {% endif %}
                         </td>
                         {% endfor %}

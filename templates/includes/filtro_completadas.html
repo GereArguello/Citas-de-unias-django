@@ -1,0 +1,19 @@
+{% if request.user.is_superuser %}
+<div class="filtros-botones d-flex flex-column gap-3 mt-4">
+    <a href="{% url 'lista_semana' %}" class="btn filtro-btn"> Filtrar por semana </a>
+    <a href="{% url 'lista_mes' %}" class="btn filtro-btn"> Filtrar por mes </a>
+    <button class="btn filtro-btn"
+            onclick="document.getElementById('form-personalizado').classList.toggle('d-none')">  <!-- Javascript nativo-->
+        Filtrar personalizado 
+    </button>
+
+    <form id="form-personalizado" action="{% url 'lista_personalizada' %}" 
+          method="get" class="d-none d-flex flex-column gap-2 mt-2">
+        <label for="inicio">Desde:</label>
+        <input type="date" name="inicio" id="inicio" class="form-control"> <!-- Recordar que con name aplicamos luego el request.GET.get -->
+        <label for="fin">Hasta:</label>
+        <input type="date" name="fin" id="fin" class="form-control">
+        <button type="submit" class="btn filtro-btn"> Aplicar </button>
+    </form>
+</div>
+{% endif %}

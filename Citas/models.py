@@ -7,7 +7,7 @@ class Cita (models.Model):      #Creamos una tabla
     SERVICIOS = [
         ('Manicura', 'Manicura'), #Lista de tuplas, (como lo ves, como lo ven)
         ('Pedicura', 'Pedicura'),
-        ('Semi', 'Semipermanente'),
+        ('Semipermanente', 'Semipermanente'),
     ]
 
     HORARIOS = [

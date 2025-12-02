@@ -7,21 +7,21 @@
 <div class="row">
     <section class="col-md-4 offset-md-4 mt-5">
 
-        {% if form.errors %}
-        {% for field, errors in form.errors.items %}
-        {% if forloop.first %}
-        <div class="alert alert-danger">{{ errors.0 }}</div>
-        {% endif %}
-        {% endfor %}
+        {% if form.errors %} <!-- Creamos condicional para mostrar SOLO el primer error -->
+            {% for field, errors in form.errors.items %}
+                {% if forloop.first %}
+                    <div class="alert alert-danger">{{ errors.0 }}</div> <!-- class perteneciente a Bootstrap-->
+                {% endif %}
+            {% endfor %}
         {% endif %}
 
         <form method="POST" class="card card-body">
             <h1 class="text-center">Registrarse</h1>
             {% csrf_token %}
             <div class="mb-3">
-                <label for="username">Nombre de usuario:</label>
+                <label for="username">Nombre de usuario:</label> <!-- for= e id= son los que permiten que conecten -->
                 <input type="text" name="username" id="username" class="form-control"
-                    placeholder="Escribe tu nombre de usuario">
+                    placeholder="Escribe tu nombre de usuario"> <!-- name es la clave que enviará a request.POST-->
             </div>
             <div class="mb-3">
                 <label for="password1">Contraseña:</label>
@@ -34,7 +34,7 @@
                     placeholder="Confirma tu contraseña">
             </div>
             <button class="btn btn-primary">
-                Iniciar sesión
+                Registrarse
             </button>
         </form>
     </section>

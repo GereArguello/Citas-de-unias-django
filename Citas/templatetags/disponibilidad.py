@@ -18,3 +18,11 @@ def es_ocupado(año, mes, dia, hora, ocupadas):
 
     # retornar si esa clave está dentro del diccionario
     return clave in ocupadas
+
+@register.simple_tag
+def es_pasado(año, mes, dia):
+
+    hoy = date.today()
+    fecha = date(int(año), int(mes), int(dia))
+
+    return fecha < hoy

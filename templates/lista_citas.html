@@ -15,11 +15,11 @@
                     <p>Servicio: {{ cita.servicio }}</p>
                     <p>Precio: ${{ cita.precio }}</p>
                     <p>Día: {{ cita.fecha }}</p>
-                    <p>Hora: {{ cita.hora|time:"H:i" }}</p>
+                    <p>Hora: {{ cita.hora|time:"H:i" }}</p> <!-- H(formato de 24 horas), i(minutos en 2 dígitos)-->
                     <p>Comentario: <br>{{ cita.comentario|default:"-" }}</p>
 
                     <div class="d-flex gap-2">
-                        {% if request.user.is_superuser %}
+                        {% if request.user.is_superuser %} <!-- Solo un superusuario puede completar cita-->
                         <form action="{% url 'completar_cita' cita.id %}" method="POST" class="d-inline">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-success">✅ Completar</button>
