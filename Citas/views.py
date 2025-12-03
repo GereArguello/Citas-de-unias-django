@@ -1,8 +1,8 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
+from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from .forms import CitaForm, UserForm, ProfileForm
@@ -46,6 +46,20 @@ def editar_perfil(request):
     }
 
     return render(request,'editar_perfil.html',formularios)
+
+@login_required
+def cambiar_pass(request):
+    if request.method == "POST":
+        form = PasswordChangeForm(user=request.user,data=request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+            messages.success(request, "Contraseña cambiada correctamente")
+            return redirect('mi_perfil')
+    else:
+        form = PasswordChangeForm(user=request.user)
+
+    return render(request,'cambiar_pass.html',{'form': form})
 
 def registrarse(request):
     if request.method == 'GET': #Si el request pide datos:

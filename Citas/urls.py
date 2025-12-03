@@ -10,6 +10,7 @@ urlpatterns = [
 
     path('mi_perfil/',views.mi_perfil, name= 'mi_perfil'),
     path('mi_perfil/editar_perfil/', views.editar_perfil, name= 'editar_perfil'),
+    path('mi_perfil/cambiar_pass/', views.cambiar_pass, name= 'cambiar_pass'),
 
     path('crear_cita/', views.crear_cita, name='crear_cita'),
     path('editar_cita/<int:id>/',views.editar_cita, name='editar_cita'),

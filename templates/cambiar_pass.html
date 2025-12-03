@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %} Cambiar Contraseña {% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-4 offset-md-4">
+        <h2 class="text-center">Cambiar contraseña</h2>
+        <form method="POST" class="card card-body">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="old_password">Contraseña actual: </label>
+                <input type="password" name="old_password" id="old_password" class="form-control" 
+                    placeholder="Contraseña actual">
+                {{ form.old_password.errors }}
+            </div>
+            <div class="mb-3">
+                <label for="new_password1">Nueva contraseña: </label>
+                <input type="password" name="new_password1" id="new_password1" class="form-control"
+                    placeholder="Nueva contraseña">
+                {{ form.new_password1.errors }}
+            </div>
+            <div class="mb-3">
+                <label for="new_password2">Repetir nueva contraseña: </label>
+                <input type="password" name="new_password2" id="new_password2" class="form-control"
+                    placeholder="Repetir nueva contraseña">
+                {{ form.new_password2.errors }}
+            </div>
+            <button class="btn btn-primary">
+                Cambiar contraseña
+            </button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

@@ -4,18 +4,18 @@
 
 {% block content %}
 
-<body>
-    <div class="row">
-        <div class="col-md-4 offset-md-4">
-            <h1 class="text-center">Editar cita</h1>
-            <form method="POST" class="card card-body"> <!-- Método para aplicar un formulario -->
-                {% csrf_token %}
-                {{ form.as_p}} <!-- función asociada a views.py-->
-                <button type="submit" class="btn btn-primary">Editar</button> <!-- Botón para guardarlo-->
-            </form>
-        </div>
+
+<div class="row">
+    <div class="col-md-4 offset-md-4">
+        <h2 class="text-center">Editar cita</h2>
+        <form method="POST" class="card card-body"> <!-- Método para aplicar un formulario -->
+            {% csrf_token %}
+            {{ form.as_p}} <!-- función asociada a views.py-->
+            <button type="submit" class="btn btn-primary">Editar</button> <!-- Botón para guardarlo-->
+        </form>
     </div>
-</body>
+</div>
+
 
 
 {% endblock %}
