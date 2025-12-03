@@ -21,7 +21,7 @@ class CitaForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs) # * recibe todos los argumentos posicionales como request.POST
-                                          # ** recibe todos los parámetros con nombre como 'instance': cita
+                                          # ** recibe todos los parámetros con nombre como {'instance': cita}
         self.fields['fecha'].input_formats = ['%Y-%m-%d']  #Le metemos el formato a 'fecha' para que al editar cita sea visible
 
     def clean_fecha(self):

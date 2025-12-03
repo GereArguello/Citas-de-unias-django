@@ -27,7 +27,7 @@ class Cita (models.Model):      #Creamos una tabla
     hora = models.TimeField(choices=HORARIOS)
     comentario = models.TextField(blank=True, null=True)
     estado = models.BooleanField(default=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null= True, blank= True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null= True, blank= True)
 
     def __str__(self): #Forma de representarlo como administrador
         return f"{self.nombre_clienta} - {self.servicio} ({self.fecha.strftime('%d/%m')} - {self.hora.strftime('%H:%M')})"
