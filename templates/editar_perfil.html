@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %} Editar Perfil {% endblock %}
+
+{% block content %}
+
+
+<div class="row">
+    <div class="col-md-4 offset-md-4">   
+        <h1 class="text-center"> Editar perfil </h1>
+        <form method="POST" enctype="multipart/form-data" class="card card-body">
+            {% csrf_token %}
+            {{ user_form.as_p}}
+            {{ profile_form.as_p}}
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

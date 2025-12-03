@@ -1,6 +1,8 @@
 from django import forms
-from .models import Cita
+from .models import Cita, Profile
 from datetime import date
+from django.contrib.auth.models import User
+import re
 
 class CitaForm(forms.ModelForm):
     class Meta:
@@ -27,7 +29,6 @@ class CitaForm(forms.ModelForm):
     def clean_fecha(self):
         fecha = self.cleaned_data['fecha']
         if fecha.weekday() == 6:
-            print(fecha)
             raise forms.ValidationError("No se atiende los domingos.")
         return fecha
     
@@ -52,3 +53,28 @@ class CitaForm(forms.ModelForm):
 
         return cleaned_data
     
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name','email']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'nombre'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control','placeholder':'apellido'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder':'ejemplo@mail.com'}),
+        }
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['telefono']
+        widgets = {
+            'telefono': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'+52 xxx xxx xxxx'}),
+        }
+    def clean_telefono(self):
+        telefono = self.cleaned_data['telefono'].strip()
+
+        telefono_num = re.sub(r"\D","", telefono) #Dejar solo números
+
+        if len(telefono_num) < 8 or len(telefono_num) > 14 :
+            raise forms.ValidationError("Teléfono inválido")
+        return telefono_num

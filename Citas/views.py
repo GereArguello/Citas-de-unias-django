@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
-from .forms import CitaForm
+from .forms import CitaForm, UserForm, ProfileForm
 from .models import Cita, Profile
 from .utils import semana_actual, mes_actual, citas_para_usuario, generar_calendario
 from datetime import date
@@ -21,6 +21,31 @@ def mi_perfil(request):
     profile, created = Profile.objects.get_or_create(user=usuario)
     total_citas = Cita.objects.filter(estado=True, user=request.user).count()
     return render(request,'mi_perfil.html',{'usuario': usuario, 'profile': profile, 'total_citas': total_citas})
+
+@login_required
+def editar_perfil(request):
+    user = request.user
+    profile = user.profile
+
+    if request.method == "POST":
+        user_form = UserForm(request.POST, instance= user)
+        profile_form = ProfileForm(request.POST, instance= profile)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, "Perfil actualizado correctamente.")
+            return redirect ('mi_perfil')
+    else:
+        user_form = UserForm(instance= user)
+        profile_form = ProfileForm(instance= profile)
+
+    formularios = {
+        'user_form': user_form,
+        'profile_form': profile_form
+    }
+
+    return render(request,'editar_perfil.html',formularios)
 
 def registrarse(request):
     if request.method == 'GET': #Si el request pide datos:

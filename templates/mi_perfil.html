@@ -10,10 +10,10 @@
     <div class="col-12 col-md-8 col-lg-5 text-center">
         <section class="cita-card">
             <p><strong> Usuario </strong> <br> {{ usuario.username }} </p>
-            <p><strong> Nombre </strong> <br> {{ usuario.firstname|default:"--" }} </p>
-            <p><strong> Apellido </strong> <br> {{ usuario.lastname|default:"--" }} </p>
-            <p><strong> Mail </strong> <br> {{ usuario.email|default:"--" }} </p>
+            <p><strong> Nombre </strong> <br> {{ usuario.first_name|default:"--" }} </p>
+            <p><strong> Apellido </strong> <br> {{ usuario.last_name|default:"--" }} </p>
             <p><strong> Telefono </strong> <br> {{ profile.telefono|default:"--" }} </p>
+            <p><strong> Mail </strong> <br> {{ usuario.email|default:"--" }} </p>
             <p><strong> Citas completadas </strong> <br> {{ total_citas }} </p>
             <p><strong> Fecha de creación </strong> <br> {{ usuario.date_joined|date:'d/m/Y' }} </p>
         </section>
