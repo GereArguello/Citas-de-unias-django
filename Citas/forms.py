@@ -71,7 +71,13 @@ class ProfileForm(forms.ModelForm):
             'telefono': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'+52 xxx xxx xxxx'}),
         }
     def clean_telefono(self):
-        telefono = self.cleaned_data['telefono'].strip()
+        telefono = self.cleaned_data['telefono']
+
+        if not telefono:
+            telefono = ""
+            return telefono
+        
+        telefono = telefono.strip()
 
         telefono_num = re.sub(r"\D","", telefono) #Dejar solo números
 
