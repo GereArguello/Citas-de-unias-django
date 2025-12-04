@@ -20,7 +20,7 @@ def mi_perfil(request):
     usuario = request.user
     profile, created = Profile.objects.get_or_create(user=usuario)
     total_citas = Cita.objects.filter(estado=True, user=request.user).count()
-    return render(request,'mi_perfil.html',{'usuario': usuario, 'profile': profile, 'total_citas': total_citas})
+    return render(request,'perfil/mi_perfil.html',{'usuario': usuario, 'profile': profile, 'total_citas': total_citas})
 
 @login_required
 def editar_perfil(request):
@@ -45,7 +45,7 @@ def editar_perfil(request):
         'profile_form': profile_form
     }
 
-    return render(request,'editar_perfil.html',formularios)
+    return render(request,'perfil/editar_perfil.html',formularios)
 
 @login_required
 def cambiar_pass(request):
@@ -59,14 +59,14 @@ def cambiar_pass(request):
     else:
         form = PasswordChangeForm(user=request.user)
 
-    return render(request,'cambiar_pass.html',{'form': form})
+    return render(request,'perfil/cambiar_pass.html',{'form': form})
 
 @login_required
 def eliminar_perfil(request):
 
     #Bloquear al superusuario ANTES de procesar el POST
     if request.user.is_superuser:
-        return render(request, 'eliminar_perfil.html', {
+        return render(request, 'perfil/eliminar_perfil.html', {
             "error": "Un superusuario no puede eliminar su propia cuenta."
         })
 
@@ -81,11 +81,11 @@ def eliminar_perfil(request):
         return render (request, 'eliminar_perfil.html',{
             "error": "Debes escribir la palabra CONFIRMAR exactamente"
         })
-    return render(request,'eliminar_perfil.html')
+    return render(request,'perfil/eliminar_perfil.html')
 
 def registrarse(request):
     if request.method == 'GET': #Si el request pide datos:
-        return render(request, 'registrarse.html', {
+        return render(request, 'auth/registrarse.html', {
             'form': UserCreationForm()
         })
 
@@ -96,7 +96,7 @@ def registrarse(request):
         login(request, user)
         return redirect('inicio')
 
-    return render(request, 'registrarse.html', {
+    return render(request, 'auth/registrarse.html', {
         'form': form, 
     })
 
@@ -107,14 +107,14 @@ def cerrar_sesion(request):
 
 def iniciar_sesion(request):
     if request.method == 'GET': #Si el request pide datos:
-        return render(request, 'iniciar_sesion.html', {
+        return render(request, 'auth/iniciar_sesion.html', {
         })
     else: #Al ser POST, autenticamos datos del formulario
         user = authenticate(request, 
                             username=request.POST.get('username'), 
                             password=request.POST.get('password'))
         if user is None: #Si no hay usuario que coincida, re-enviamos la página pero esta vez con la clave 'error'
-            return render(request, 'iniciar_sesion.html', {
+            return render(request, 'auth/iniciar_sesion.html', {
                 'error': 'El usuario o contraseña son incorrectos.'
             })
         else:
@@ -133,7 +133,7 @@ def crear_cita(request):
     else:
         form = CitaForm()
 
-    return render(request, 'crear_cita.html', {'form': form}) #'form' es la clave asociada al html
+    return render(request, 'citas/crear_cita.html', {'form': form}) #'form' es la clave asociada al html
 
 @login_required
 def editar_cita(request, id):
@@ -150,7 +150,7 @@ def editar_cita(request, id):
     else:
         form = CitaForm(instance=cita)
 
-    return render(request, 'editar_cita.html', {'form': form})
+    return render(request, 'citas/editar_cita.html', {'form': form})
 
 @login_required
 @require_POST #Exige que se confirme vía POST, evitando así una url como /completar_cita/12
@@ -182,7 +182,7 @@ def eliminar_cita(request, id):
 def lista_citas(request):
     lista = citas_para_usuario(request.user).filter(estado=False).order_by('fecha') #Llamamos todo el contenido de la tabla
 
-    return render(request,'lista_citas.html',{'lista': lista})
+    return render(request,'citas/lista_citas.html',{'lista': lista})
 
 @login_required
 def citas_completadas(request):
@@ -192,7 +192,7 @@ def citas_completadas(request):
 
     total_completadas = lista_hoy.aggregate(total=Sum('precio'))['total'] or 0 #Si la clave total fuera None, devuelve 0
     
-    return render(request,'lista_completadas.html',{'lista': lista, 'total': total_completadas})
+    return render(request,'citas/lista_completadas.html',{'lista': lista, 'total': total_completadas})
 
 @login_required
 def filtrar_semana(request):
