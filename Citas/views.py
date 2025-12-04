@@ -78,7 +78,7 @@ def eliminar_perfil(request):
             user.delete()
             return redirect('registrarse')
         
-        return render (request, 'eliminar_perfil.html',{
+        return render (request, 'perfil/eliminar_perfil.html',{
             "error": "Debes escribir la palabra CONFIRMAR exactamente"
         })
     return render(request,'perfil/eliminar_perfil.html')
