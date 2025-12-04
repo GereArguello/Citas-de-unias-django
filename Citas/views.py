@@ -61,6 +61,28 @@ def cambiar_pass(request):
 
     return render(request,'cambiar_pass.html',{'form': form})
 
+@login_required
+def eliminar_perfil(request):
+
+    #Bloquear al superusuario ANTES de procesar el POST
+    if request.user.is_superuser:
+        return render(request, 'eliminar_perfil.html', {
+            "error": "Un superusuario no puede eliminar su propia cuenta."
+        })
+
+    if request.method == "POST":
+        texto = request.POST.get("confirmacion", "")
+        if texto == "CONFIRMAR":
+            user = request.user       
+            logout(request)
+            user.delete()
+            return redirect('registrarse')
+        
+        return render (request, 'eliminar_perfil.html',{
+            "error": "Debes escribir la palabra CONFIRMAR exactamente"
+        })
+    return render(request,'eliminar_perfil.html')
+
 def registrarse(request):
     if request.method == 'GET': #Si el request pide datos:
         return render(request, 'registrarse.html', {

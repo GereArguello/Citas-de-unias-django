@@ -6,14 +6,25 @@
 
 
 <div class="row">
-    <div class="col-md-4 offset-md-4">   
-        <h2 class="text-center"> Editar perfil </h2>
+    <div class="col-md-4 offset-md-4 position-relative">
+
+        <!-- Flecha a la izquierda -->
+        <a href="{% url 'mi_perfil' %}" 
+           class="position-absolute text-decoration-none" 
+           style="left: 20px; top: 0; font-size:1.4rem;">
+            ⬅️
+        </a>
+
+        <!-- Título centrado -->
+        <h2 class="text-center mb-2">Editar perfil</h2>
+
         <form method="POST" enctype="multipart/form-data" class="card card-body">
             {% csrf_token %}
-            {{ user_form.as_p}}
-            {{ profile_form.as_p}}
+            {{ user_form.as_p }}
+            {{ profile_form.as_p }}
             <button type="submit" class="btn btn-primary">Guardar</button>
         </form>
+
     </div>
 </div>
 

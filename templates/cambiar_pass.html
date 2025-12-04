@@ -5,8 +5,13 @@
 {% block content %}
 
 <div class="row">
-    <div class="col-md-4 offset-md-4">
-        <h2 class="text-center">Cambiar contraseña</h2>
+    <div class="col-md-4 offset-md-4 position-relative">
+        <a href="{% url 'mi_perfil' %}" 
+           class="position-absolute text-decoration-none" 
+           style="left: 20px; top: 0; font-size:1.4rem;">
+            ⬅️
+        </a>
+        <h2 class="text-center mb-3">Cambiar contraseña</h2>
         <form method="POST" class="card card-body">
             {% csrf_token %}
             <div class="mb-3">

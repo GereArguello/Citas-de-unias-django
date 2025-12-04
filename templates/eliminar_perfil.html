@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %} Confirmar eliminación {% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-4 offset-md-4">
+        <h2 class="text-center text-danger"> Confirmar eliminación</h2>
+
+        <p> Para eliminar tu cuenta permanentemente, escribí <strong> CONFIRMAR</strong>:</p>
+        <form method="POST" class="card card-body">
+            {% csrf_token %}
+            <input name="confirmacion" class="form-control" placeholder="CONFIRMAR" required autocomplete="off">
+
+            {% if error %}
+                <p class="text-danger mt-2">{{ error }} </p>
+            {% endif %}
+
+            <button class="btn btn-danger mt-3">Eliminar definitivamente</button>
+
+        </form>
+        <a class="btn btn-primary mt-3 w-100" href="{% url 'mi_perfil' %}">Volver</a>
+    </div>
+</div>
+
+{% endblock %}
