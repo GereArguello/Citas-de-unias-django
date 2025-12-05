@@ -210,7 +210,7 @@ def filtrar_semana(request):
 
     total_semana = lista.aggregate(total=Sum('precio'))['total'] or 0
 
-    return render(request, 'lista_completadas.html',{
+    return render(request, 'citas/lista_completadas.html',{
         'lista': lista, 'total':total_semana, 'rango':(inicio, fin)
     })
 
@@ -224,7 +224,7 @@ def filtrar_mes(request):
     
     total_mes = lista.aggregate(total=Sum('precio'))['total'] or 0
 
-    return render(request, 'lista_completadas.html',{
+    return render(request, 'citas/lista_completadas.html',{
         'lista': lista, 'total':total_mes, 'rango':(inicio, fin)
     })
 
@@ -252,7 +252,7 @@ def filtrar_personalizado(request):
 
     return render(
         request,
-        'lista_completadas.html',
+        'citas/lista_completadas.html',
         {
             'lista': lista,
             'total': total_personalizado,

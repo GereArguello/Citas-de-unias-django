@@ -33,7 +33,8 @@ class CitaForm(forms.ModelForm):
         fecha = kwargs.pop("fecha", None)
         super().__init__(*args, **kwargs)
 
-        # 1) Si viene por POST (cuando enviás el form para guardar)
+
+        # 1) Si la fecha viene desde el formulario (GET por onchange o POST al guardar)
         if self.data.get('fecha'):
             fecha_str = self.data.get('fecha')
 
@@ -56,6 +57,20 @@ class CitaForm(forms.ModelForm):
                 fecha = datetime.strptime(fecha_str, "%Y-%m-%d").date()
             except ValueError:
                 fecha = None
+        
+        # Forzar fecha en el input HTML SOLO si es válida
+        if fecha:
+            # Si viene como string, convertirla
+            if isinstance(fecha, str):
+                try:
+                    fecha = datetime.strptime(fecha, "%Y-%m-%d").date()
+                except:
+                    fecha = None
+
+        if fecha:
+            fecha_str = fecha.strftime("%Y-%m-%d")
+            self.fields['fecha'].initial = fecha_str
+            self.fields['fecha'].widget.attrs['value'] = fecha_str
 
         # 4) Con la fecha ya resuelta, cargamos los horarios
         if fecha:
@@ -83,7 +98,6 @@ class CitaForm(forms.ModelForm):
             self.fields['hora'].choices = [("", "Seleccione una fecha primero")]
             self.fields['hora'].widget.choices = self.fields['hora'].choices
 
-        self.fields['fecha'].input_formats = ['%Y-%m-%d']
     
     def clean(self):
         cleaned_data = super().clean()
