@@ -26,3 +26,11 @@ def es_pasado(año, mes, dia):
     fecha = date(int(año), int(mes), int(dia))
 
     return fecha < hoy
+
+@register.simple_tag
+def make_date(anio, mes, dia):
+    return date(int(anio), int(mes), int(dia))
+
+@register.filter
+def get_item(diccionario, clave):
+    return diccionario.get(clave)

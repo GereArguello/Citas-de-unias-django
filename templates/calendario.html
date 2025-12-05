@@ -56,13 +56,14 @@
                                 {% else %}          
                                     <div class="dia">
                                         <div class="numero">{{ dia }}</div>
-                                        {% for hora, texto in opciones %}
+                                        {% make_date año mes dia as fecha_actual %}
+                                        {% for hora in disponibilidad|get_item:fecha_actual %}
                                             <div class="horarios">
                                                 {% es_ocupado año mes dia hora ocupadas as ocupado %} <!-- Llama al tag que verifica si (fecha, hora) está en el diccionario 'ocupadas' -->
                                                 {% if ocupado %}
                                                     <p> ❌ </p>
                                                 {% else %}
-                                                    <p> {{ texto }}</p>
+                                                    <p> {{ hora }}</p>
                                                 {% endif %}
                                             </div>
                                         {% endfor %}

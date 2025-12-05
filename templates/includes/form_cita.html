@@ -1,0 +1,60 @@
+<form method="POST" class="card card-body" id="citaform">
+    {% csrf_token %}
+
+    {# === ERRORES GENERALES DEL FORM (ej: "Ese turno ya está ocupado") === #}
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+
+    <div class="mb-3">
+        <label for="{{ form.fecha.id_for_label }}">Fecha</label>
+        {{ form.fecha }}
+        {% if form.fecha.errors %}
+            <div class="text-danger small">{{ form.fecha.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <label for="{{ form.hora.id_for_label }}">Hora</label>
+        {{ form.hora }}
+        {% if form.hora.errors %}
+            <div class="text-danger small">{{ form.hora.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <label for="{{ form.nombre_clienta.id_for_label }}">Nombre</label>
+        {{ form.nombre_clienta }}
+        {% if form.nombre_clienta.errors %}
+            <div class="text-danger small">{{ form.nombre_clienta.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <label for="{{ form.servicio.id_for_label }}">Servicio</label>
+        {{ form.servicio }}
+        {% if form.servicio.errors %}
+            <div class="text-danger small">{{ form.servicio.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <label for="{{ form.precio.id_for_label }}">Precio</label>
+        {{ form.precio }}
+        {% if form.precio.errors %}
+            <div class="text-danger small">{{ form.precio.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <label for="{{ form.comentario.id_for_label }}">Comentario</label>
+        {{ form.comentario }}
+        {% if form.comentario.errors %}
+            <div class="text-danger small">{{ form.comentario.errors }}</div>
+        {% endif %}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</form>

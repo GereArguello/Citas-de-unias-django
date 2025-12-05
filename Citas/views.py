@@ -6,7 +6,7 @@ from django.contrib.auth import login, logout, authenticate, update_session_auth
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from .forms import CitaForm, UserForm, ProfileForm
-from .models import Cita, Profile
+from .models import Cita, Profile, DisponibilidadDia
 from .utils import semana_actual, mes_actual, citas_para_usuario, generar_calendario
 from datetime import date
 import calendar
@@ -123,17 +123,21 @@ def iniciar_sesion(request):
 
 @login_required
 def crear_cita(request):
-    if request.method == "POST": #El método es el mismo que HTML
-        form = CitaForm(request.POST) #Variable que contiene el formulario
-        if form.is_valid():
-            cita = form.save(commit=False) #Crear cita sin guardar
-            cita.user = request.user #Asignar dueño
-            cita.save()
-            return redirect('lista_citas')
-    else:
-        form = CitaForm()
 
-    return render(request, 'citas/crear_cita.html', {'form': form}) #'form' es la clave asociada al html
+    fecha_inicial = request.GET.get("fecha")
+
+    if request.method == "POST":
+        form = CitaForm(request.POST, fecha=request.POST.get("fecha"))
+        if form.is_valid():
+            cita = form.save(commit=False)
+            cita.user = request.user
+            cita.save()
+            return redirect("lista_citas")
+    else:
+        # GET con o sin fecha
+        form = CitaForm(initial={"fecha": fecha_inicial}, fecha=fecha_inicial)
+
+    return render(request, "citas/crear_cita.html", {"form": form})
 
 @login_required
 def editar_cita(request, id):
@@ -142,13 +146,15 @@ def editar_cita(request, id):
     else:
         cita = get_object_or_404(Cita, id=id, user=request.user) #Un usuario común solo puede editar las suyas
 
+    fecha_inicial = request.GET.get("fecha")
+
     if request.method == 'POST':
-        form = CitaForm(request.POST, instance=cita) #instance para editar un objeto existente
+        form = CitaForm(request.POST, instance=cita, fecha=request.POST.get("fecha")) #instance para editar un objeto existente
         if form.is_valid():
             form.save()
             return redirect('lista_citas')
     else:
-        form = CitaForm(instance=cita)
+        form = CitaForm(instance=cita,initial={"fecha": fecha_inicial}, fecha= fecha_inicial)
 
     return render(request, 'citas/editar_cita.html', {'form': form})
 
@@ -260,7 +266,6 @@ def calendario(request):
     (5, "Mayo"),(6, "Junio"),(7, "Julio"),(8, "Agosto"),
     (9, "Septiembre"),(10, "Octubre"),(11, "Noviembre"),(12, "Diciembre"),]
     
-    opciones = Cita.HORARIOS
     
     mes = request.GET.get("mes")
     año = request.GET.get("año")
@@ -278,6 +283,10 @@ def calendario(request):
     inicio_mes = date(año, mes, 1)
     ultimo_dia = calendar.monthrange(año, mes)[1]
     fin_del_mes = date(año, mes, ultimo_dia)
+
+    disponibilidad = DisponibilidadDia.objects.filter(fecha__range=(inicio_mes,fin_del_mes))
+    disp_dia = {d.fecha: d.horarios for d in disponibilidad}
+
     citas_del_mes = Cita.objects.filter(fecha__range=(inicio_mes,fin_del_mes))
 
     hoy = date.today()
@@ -289,4 +298,4 @@ def calendario(request):
         
     semanas = generar_calendario(año, mes)
     
-    return render(request,'calendario.html',{'semanas': semanas, 'mes': mes, 'año': año, 'meses': meses, 'opciones': opciones, 'ocupadas': ocupadas, 'hoy': hoy})
+    return render(request,'calendario.html',{'semanas': semanas, 'mes': mes, 'año': año, 'meses': meses, 'disponibilidad': disp_dia, 'ocupadas': ocupadas, 'hoy': hoy})

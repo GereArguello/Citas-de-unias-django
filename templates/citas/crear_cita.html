@@ -5,17 +5,21 @@
 {% block content %}
 
 
-
 <div class="row">
     <div class="col-md-4 offset-md-4">
         <h2 class="text-center">Agendar cita</h2>
-        <form method="POST" class="card card-body"> <!-- Método para aplicar un formulario -->
-            {% csrf_token %}
-            {{ form.as_p}} <!-- función asociada a views.py-->
-            <button type="submit" class="btn btn-primary">Guardar</button> <!-- Botón para guardarlo-->
-        </form>
+        {% include 'includes/form_cita.html' %}
     </div>
 </div>
+
+<script>
+function cambiar_fecha(fecha) {
+    const url = new URL(window.location.href);
+    url.searchParams.set("fecha", fecha);
+    window.location.href = url.toString();  // ← siempre GET
+}
+</script>
+
 
 
 

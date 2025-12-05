@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Cita
+from .models import Cita, Profile, DisponibilidadDia
 # Register your models here.
 
 # class TaskAdmin(admin.ModelAdmin):
@@ -7,3 +7,5 @@ from .models import Cita
 
 
 admin.site.register(Cita) #,TaskAdmin)
+admin.site.register(Profile) #,TaskAdmin)
+admin.site.register(DisponibilidadDia) #,TaskAdmin)
