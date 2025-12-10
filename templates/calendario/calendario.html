@@ -21,7 +21,7 @@
             <input type="number" name="año" id="año" class="form-control" value="{{año}}", min="2025", max="2040" >
 
             <div class="text-center">
-                <button type="submit" class="btn filtro-btn">Aplicar</button>
+                <button type="submit" class="btn filtro-btn mt-3">Aplicar</button>
             </div>
         </form>
     </div>
@@ -76,6 +76,9 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% if request.user.is_superuser %}
+            <a class="btn btn-success mt-3 mb-3" href="{% url 'editar_turnos' %}"> Editar turnos </a>
+        {% endif %}
     </div>
 </div>
 

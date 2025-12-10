@@ -24,5 +24,6 @@ urlpatterns = [
     path('citas_completadas/mes', views.filtrar_mes, name= 'lista_mes'),
     path('citas_completadas/personalizado/', views.filtrar_personalizado, name='lista_personalizada'),
     
-    path('calendario/', views.calendario, name='calendario')
+    path('calendario/', views.calendario, name='calendario'),
+    path('calendario/editar_turnos/', views.editar_turnos, name='editar_turnos')
 ]

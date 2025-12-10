@@ -5,11 +5,12 @@ from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
-from .forms import CitaForm, UserForm, ProfileForm
+from .forms import CitaForm, UserForm, ProfileForm, TurnosForm
 from .models import Cita, Profile, DisponibilidadDia
 from .utils import semana_actual, mes_actual, citas_para_usuario, generar_calendario
 from datetime import date
 import calendar
+from django.http import HttpResponseForbidden
 
 @login_required
 def index(request):
@@ -202,6 +203,10 @@ def citas_completadas(request):
 
 @login_required
 def filtrar_semana(request):
+
+    if not request.user.is_superuser:
+        return HttpResponseForbidden("No tenés permiso para acceder a esta sección.")
+    
     inicio, fin = semana_actual() #Desempaquetamos el rango de la semana
 
     lista = citas_para_usuario(request.user).filter(
@@ -216,6 +221,10 @@ def filtrar_semana(request):
 
 @login_required
 def filtrar_mes(request):
+
+    if not request.user.is_superuser:
+        return HttpResponseForbidden("No tenés permiso para acceder a esta sección.")
+    
     inicio, fin = mes_actual() #Desempaquetamos el rango del mes
 
     lista = citas_para_usuario(request.user).filter(
@@ -230,6 +239,10 @@ def filtrar_mes(request):
 
 @login_required
 def filtrar_personalizado(request):
+    
+    if not request.user.is_superuser:
+        return HttpResponseForbidden("No tenés permiso para acceder a esta sección.")
+    
     inicio_str = request.GET.get('inicio') #Recibimos del formulario ambas fechas
     fin_str = request.GET.get('fin')
 
@@ -298,4 +311,42 @@ def calendario(request):
         
     semanas = generar_calendario(año, mes)
     
-    return render(request,'calendario.html',{'semanas': semanas, 'mes': mes, 'año': año, 'meses': meses, 'disponibilidad': disp_dia, 'ocupadas': ocupadas, 'hoy': hoy})
+    return render(request,'calendario/calendario.html',{'semanas': semanas, 'mes': mes, 'año': año, 'meses': meses, 'disponibilidad': disp_dia, 'ocupadas': ocupadas, 'hoy': hoy})
+
+@login_required
+def editar_turnos(request):
+
+    if not request.user.is_superuser:
+        return HttpResponseForbidden("Solo un superusuario puede editar los turnos.")
+    
+    fecha = request.GET.get('fecha')
+    instancia = DisponibilidadDia.objects.filter(fecha=fecha).first() if fecha else None
+
+    # --- POST: guardar cambios o crear nueva disponibilidad ---
+    if request.method == "POST":
+        if instancia:  
+            # Editar la instancia existente
+            form = TurnosForm(request.POST, instance=instancia)
+        else:
+            # Crear una nueva instancia
+            form = TurnosForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect('calendario')
+
+    # --- GET: mostrar formulario para editar o crear ---
+    else:
+        if instancia:  
+            # Mostrar instancia existente
+            form = TurnosForm(instance=instancia)
+        elif fecha:  
+            # Mostrar fecha predeterminada si no existe instancia
+            form = TurnosForm(initial={'fecha': fecha})
+        else:
+            # No hay fecha seleccionada → formulario vacío
+            form = TurnosForm()
+
+    return render(request, 'calendario/editar_turnos.html', {
+        'form': form
+    })

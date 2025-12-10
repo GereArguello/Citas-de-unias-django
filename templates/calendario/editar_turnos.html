@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %} Editar turnos {% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-4 offset-md-4">
+        <h2 class="text-center"> Editar turnos </h2>
+        <div class="card sombra-azul mt-3 d-flex justify-content-center align-items-center">
+            <form method="POST" class="card-body">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary mx-auto d-block">Confirmar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function cambiar_fecha(fecha) {
+    const url = new URL(window.location.href);
+    url.searchParams.set("fecha", fecha);
+    window.location.href = url.toString();  // ← siempre GET
+}
+</script>
+
+
+{% endblock %}
+

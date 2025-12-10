@@ -149,6 +149,13 @@
     
 }
 
+.sombra-azul {
+    margin-top: 3px;
+    border: 1px solid #6dbdff !important;
+    box-shadow: 0 0 10px   #6dbdff !important;
+    border-radius: 10px;
+}
+
 /* Mobile */
 @media (max-width: 768px) {
 
