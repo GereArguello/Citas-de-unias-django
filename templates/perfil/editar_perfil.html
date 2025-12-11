@@ -18,7 +18,7 @@
         <!-- Título centrado -->
         <h2 class="text-center mb-2">Editar perfil</h2>
 
-        <form method="POST" enctype="multipart/form-data" class="card card-body">
+        <form method="POST" enctype="multipart/form-data" class="card card-body sombra-azul">
             {% csrf_token %}
             {{ user_form.as_p }}
             {{ profile_form.as_p }}

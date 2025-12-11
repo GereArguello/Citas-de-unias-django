@@ -117,36 +117,46 @@
     height: 110px;
 }
 
-/* El contenido interno no debe aportar tamaño extra */
+/* Cada cuadrado del calendario */
 .dia {
     display: flex;
-    flex-direction: column;
-    padding: 0;
-    border: none;       /* ← MUY IMPORTANTE */
+    flex-direction: column;   /* Día arriba, horarios debajo */
+    justify-content: flex-start;
+    height: 130px;
+    padding: 4px;
+    position: relative;
+    align-items: stretch;     /* Permite centrar bien el contenido */
 }
 
+/* Número del día */
+.dia .numero {
+    font-weight: bold;
+    font-size: 0.8rem;
+    align-self: flex-start;
+}
+
+/* Contenedor de horarios */
+.horarios {
+    width: 100%;
+}
+
+/* Centrar los horarios horizontalmente */
+.horarios p {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;   /* CENTRA el horario dentro del cuadrado */
+    align-items: center;
+    text-align: center;
+    font-size: 0.80rem;
+    white-space: nowrap;       /* evita quiebres de línea */
+}
+
+/* Estilos de días vacíos */
 .dia-vacio {
     background-color: #ebebeb49;
     height: 100%;
     width: 100%;
-}
-
-.numero {
-    font-weight: bold;
-    margin: 0;
-}
-
-.horarios {
-    display: flex;
-    flex-direction: column;
-}
-
-.horarios p {
-    font-size: 0.8rem;
-    font-style: italic;
-    margin-bottom: 3px;
-    color: rgba(17, 54, 0, 0.788)
-    
 }
 
 .sombra-azul {
@@ -154,6 +164,19 @@
     border: 1px solid #6dbdff !important;
     box-shadow: 0 0 10px   #6dbdff !important;
     border-radius: 10px;
+}
+
+.sombra-roja {
+    margin-top: 3px;
+    border: 1px solid #ff6d6d !important;
+    box-shadow: 0 0 10px   #ff6d6d !important;
+    border-radius: 10px;
+}
+
+.cita-ocupada {
+    margin-top: 3px;
+    background-color:#73b7ff60;
+
 }
 
 /* Mobile */

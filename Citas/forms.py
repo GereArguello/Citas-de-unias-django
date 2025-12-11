@@ -76,24 +76,45 @@ class CitaForm(forms.ModelForm):
         if fecha:
             try:
                 disponibilidad = DisponibilidadDia.objects.get(fecha=fecha)
-                horarios = [(h, h) for h in disponibilidad.horarios]
+                
+                # 1) Lista original de horarios disponibles en ese día
+                horarios_disponibles = list(disponibilidad.horarios)
+                        
+                # Si hay disponibilidad registrada, pero VACÍA
+                if not horarios_disponibles:
+                    self.fields['hora'].choices = [("", "No hay horarios disponibles este día")]
+                    self.fields['hora'].widget.choices = self.fields['hora'].choices
+                    return  
 
-                # INCLUIMOS LA LÍNEA CLAVE PARA QUE SE RENDERICE EL SELECT
-                self.fields['hora'].choices = horarios
-                self.fields['hora'].widget.choices = horarios   # ← NUEVO FIX
+                # 2) Obtener horarios ya ocupados por citas reales
+                ocupados_qs = Cita.objects.filter(fecha=fecha).values_list("hora", flat=True)
 
-                # Incluir la hora actual al editar
+                # Convertimos horas datetime.time → "HH:MM"
+                ocupados = {h.strftime("%H:%M") for h in ocupados_qs}
+
+                # 3) Filtramos dejando SOLO horarios libres
+                horarios_filtrados = [
+                    h for h in horarios_disponibles if h not in ocupados
+                ]
+
+                # 4) Si estamos editando, permitimos que aparezca la hora actual aunque esté ocupada
                 if self.instance and self.instance.hora:
                     hora_actual = self.instance.hora.strftime("%H:%M")
-                    if (hora_actual, hora_actual) not in horarios:
-                        horarios.append((hora_actual, hora_actual))
+                    if hora_actual not in horarios_filtrados:
+                        horarios_filtrados.append(hora_actual)
 
+                # Convertimos a choices
+                horarios = [(h, h) for h in sorted(horarios_filtrados)]
+
+                # Renderizamos el select
+                self.fields['hora'].choices = horarios
+                self.fields['hora'].widget.choices = horarios
 
             except DisponibilidadDia.DoesNotExist:
                 self.fields['hora'].choices = [("", "No hay horarios disponibles este día")]
                 self.fields['hora'].widget.choices = self.fields['hora'].choices
-        else:
-            self.fields['hora'].choices = [("", "Seleccione una fecha primero")]
+        else: 
+            self.fields['hora'].choices = [("", "Seleccione una fecha primero")] 
             self.fields['hora'].widget.choices = self.fields['hora'].choices
 
     

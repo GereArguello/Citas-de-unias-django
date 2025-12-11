@@ -163,6 +163,8 @@ def editar_cita(request, id):
     if request.method == 'POST':
         form = CitaForm(request.POST, instance=cita, fecha=request.POST.get("fecha")) #instance para editar un objeto existente
         if form.is_valid():
+            if not request.user.is_superuser:
+                cita.user = request.user  # se asegura de que la cita siga siendo suya
             form.save()
             return redirect('lista_citas')
     else:
@@ -262,9 +264,23 @@ def filtrar_personalizado(request):
     if not (inicio_str and fin_str):
         return redirect('citas_completadas')
 
-    # Convertir las fechas válidas
-    inicio = date.fromisoformat(inicio_str)
-    fin = date.fromisoformat(fin_str)
+    try:
+        inicio = date.fromisoformat(inicio_str)
+        fin = date.fromisoformat(fin_str)
+    except ValueError:
+        messages.error(request, "Formato de fecha inválido.")
+        return redirect('citas_completadas')
+
+    # Validar orden
+    if fin < inicio:
+        error = "La fecha final no puede ser menor a la inicial."
+        total = 0
+        return render(request, "citas/lista_completadas.html", {"error": error, 'total': total})
+
+    if (fin - inicio).days > 90:
+        error = "El rango máximo permitido es de 90 días."
+        total = 0
+        return render(request, "citas/lista_completadas.html", {"error": error, 'total': total})
 
     rango = (inicio, fin)
 

@@ -6,6 +6,11 @@
 
 <div class="contenedor"> 
     <h2 class="col-centro text-center">Citas completadas</h2>
+    {% if error %}
+    <div class="alert alert-danger text-center mb-3">
+        {{ error }}
+    </div>
+    {% endif %}
     {% if request.user.is_superuser %}
         <div class="col-derecha ingresos-box">
         {% if rango %}

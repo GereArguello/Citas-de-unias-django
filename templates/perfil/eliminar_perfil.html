@@ -6,10 +6,10 @@
 
 <div class="row">
     <div class="col-md-4 offset-md-4">
-        <h2 class="text-center text-danger"> Confirmar eliminación</h2>
+        <h2 class="text-center"> Confirmar eliminación</h2>
 
         <p> Para eliminar tu cuenta permanentemente, escribe <strong> CONFIRMAR</strong>:</p>
-        <form method="POST" class="card card-body">
+        <form method="POST" class="card card-body sombra-roja">
             {% csrf_token %}
             <input name="confirmacion" class="form-control" placeholder="CONFIRMAR" required autocomplete="off">
 

@@ -7,7 +7,7 @@
 
 
 <div class="row mb-4">
-    <div class="col-md-4 offset-md-4">
+    <div class="col-md-4 offset-md-4 sombra-azul">
         <form method="get" class="d-flex flex-column gap-2 mt-2">
 
             <label for="mes">Mes:</label>
@@ -21,7 +21,7 @@
             <input type="number" name="año" id="año" class="form-control" value="{{año}}", min="2025", max="2040" >
 
             <div class="text-center">
-                <button type="submit" class="btn filtro-btn mt-3">Aplicar</button>
+                <button type="submit" class="btn filtro-btn mt-3 mb-3">Aplicar</button>
             </div>
         </form>
     </div>
@@ -61,7 +61,11 @@
                                             <div class="horarios">
                                                 {% es_ocupado año mes dia hora ocupadas as ocupado %} <!-- Llama al tag que verifica si (fecha, hora) está en el diccionario 'ocupadas' -->
                                                 {% if ocupado %}
-                                                    <p> 🌸 </p>
+                                                    {% if request.user.is_superuser%}
+                                                        <p class="cita-ocupada"> {{ hora }} </p>
+                                                    {% else %}
+                                                        <p> 🌸  </p>
+                                                    {% endif %}
                                                 {% else %}
                                                     <p> {{ hora }}</p>
                                                 {% endif %}
