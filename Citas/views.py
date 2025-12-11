@@ -130,7 +130,7 @@ def crear_cita(request):
     if request.method == "POST":
         
         form = CitaForm(request.POST, fecha=request.POST.get("fecha"))
-        
+
         if request.user.is_superuser:
             total_agenda = 0
         else:
@@ -177,6 +177,7 @@ def completar_cita(request, id):
         cita = get_object_or_404(Cita, id=id)
         cita.estado = True
         cita.save()
+        messages.success(request, "Cita completada con éxito.")
     return redirect('lista_citas')
 
 @login_required

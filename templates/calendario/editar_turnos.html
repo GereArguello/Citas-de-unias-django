@@ -5,7 +5,14 @@
 {% block content %}
 
 <div class="row">
-    <div class="col-md-4 offset-md-4">
+    <div class="col-md-4 offset-md-4 position-relative">
+                <!-- Flecha a la izquierda -->
+        <a href="{% url 'calendario' %}" 
+           class="position-absolute text-decoration-none" 
+           style="left: 20px; top: 0; font-size:1.4rem;">
+            ⬅️
+        </a>
+
         <h2 class="text-center"> Editar turnos </h2>
         <div class="card sombra-azul mt-3 d-flex justify-content-center align-items-center">
             <form method="POST" class="card-body">
@@ -26,5 +33,5 @@ function cambiar_fecha(fecha) {
 </script>
 
 
-{% endblock %
+{% endblock %}
 
