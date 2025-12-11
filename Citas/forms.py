@@ -88,8 +88,6 @@ class CitaForm(forms.ModelForm):
                     if (hora_actual, hora_actual) not in horarios:
                         horarios.append((hora_actual, hora_actual))
 
-                print(">>> FECHA RESUELTA EN FORM:", fecha)
-                print(">>> DISPONIBILIDAD:", disponibilidad.horarios)
 
             except DisponibilidadDia.DoesNotExist:
                 self.fields['hora'].choices = [("", "No hay horarios disponibles este día")]
@@ -119,7 +117,7 @@ class CitaForm(forms.ModelForm):
             if qs.exists(): #al excluirla, evitamos que este paso se cumpla
                 raise forms.ValidationError("Ese turno ya está ocupado.")
         
-        if precio < 0:
+        if precio is not None and precio < 0:
             raise forms.ValidationError("Ingrese un precio válido")
 
         return cleaned_data
@@ -177,7 +175,7 @@ class TurnosForm(forms.ModelForm):
         # Ajustar label dinámicamente
         for i in range(1, 6):
             self.fields[f"horario{i}"].label = f"Horario {i}"
-            
+
         if self.instance and self.instance.horarios:
             horarios = self.instance.horarios  # lista ejemplo ["10:00", "11:00"]
 

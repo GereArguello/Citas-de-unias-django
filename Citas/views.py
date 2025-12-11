@@ -128,7 +128,18 @@ def crear_cita(request):
     fecha_inicial = request.GET.get("fecha")
 
     if request.method == "POST":
+        
         form = CitaForm(request.POST, fecha=request.POST.get("fecha"))
+        
+        if request.user.is_superuser:
+            total_agenda = 0
+        else:
+            total_agenda = Cita.objects.filter(estado=False, user=request.user).count()
+
+        if total_agenda >= 3:
+            error = "No puedes agendar más de 3 citas"
+            return render(request, "citas/crear_cita.html",{'form': form,'error': error})
+
         if form.is_valid():
             cita = form.save(commit=False)
             cita.user = request.user
@@ -239,7 +250,7 @@ def filtrar_mes(request):
 
 @login_required
 def filtrar_personalizado(request):
-    
+
     if not request.user.is_superuser:
         return HttpResponseForbidden("No tenés permiso para acceder a esta sección.")
     
