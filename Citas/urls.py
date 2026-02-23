@@ -2,17 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.index, name='inicio'),
     
-    path('registrarse/', views.registrarse, name='registrarse'),
-    path('cerrar_sesion/', views.cerrar_sesion, name='cerrar_sesion'),
-    path('iniciar_sesion/',views.iniciar_sesion, name= 'iniciar_sesion'),
-
-    path('mi_perfil/',views.mi_perfil, name= 'mi_perfil'),
-    path('mi_perfil/editar_perfil/', views.editar_perfil, name= 'editar_perfil'),
-    path('mi_perfil/cambiar_pass/', views.cambiar_pass, name= 'cambiar_pass'),
-    path('mi_perfil/eliminar_perfil/', views.eliminar_perfil, name= 'eliminar_perfil'),
-
     path('crear_cita/', views.crear_cita, name='crear_cita'),
     path('editar_cita/<int:id>/',views.editar_cita, name='editar_cita'),
     path('completar_cita/<int:id>', views.completar_cita, name="completar_cita"),
@@ -23,7 +13,4 @@ urlpatterns = [
     path('citas_completadas/semana', views.filtrar_semana, name='lista_semana'),
     path('citas_completadas/mes', views.filtrar_mes, name= 'lista_mes'),
     path('citas_completadas/personalizado/', views.filtrar_personalizado, name='lista_personalizada'),
-    
-    path('calendario/', views.calendario, name='calendario'),
-    path('calendario/editar_turnos/', views.editar_turnos, name='editar_turnos')
 ]

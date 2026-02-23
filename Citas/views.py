@@ -1,126 +1,18 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
-from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
-from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
-from .forms import CitaForm, UserForm, ProfileForm, TurnosForm
-from .models import Cita, Profile, DisponibilidadDia
-from .utils import semana_actual, mes_actual, citas_para_usuario, generar_calendario
+from .forms import CitaForm
+from .models import Cita
+from .utils import semana_actual, mes_actual, citas_para_usuario
 from datetime import date
-import calendar
 from django.http import HttpResponseForbidden
 
 @login_required
 def index(request):
     return render(request, 'inicio.html', {'user': request.user})
 
-@login_required
-def mi_perfil(request):
-    usuario = request.user
-    profile, created = Profile.objects.get_or_create(user=usuario)
-    total_citas = Cita.objects.filter(estado=True, user=request.user).count()
-    return render(request,'perfil/mi_perfil.html',{'usuario': usuario, 'profile': profile, 'total_citas': total_citas})
-
-@login_required
-def editar_perfil(request):
-    user = request.user
-    profile = user.profile
-
-    if request.method == "POST":
-        user_form = UserForm(request.POST, instance= user)
-        profile_form = ProfileForm(request.POST, instance= profile)
-
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
-            profile_form.save()
-            messages.success(request, "Perfil actualizado correctamente.")
-            return redirect ('mi_perfil')
-    else:
-        user_form = UserForm(instance= user)
-        profile_form = ProfileForm(instance= profile)
-
-    formularios = {
-        'user_form': user_form,
-        'profile_form': profile_form
-    }
-
-    return render(request,'perfil/editar_perfil.html',formularios)
-
-@login_required
-def cambiar_pass(request):
-    if request.method == "POST":
-        form = PasswordChangeForm(user=request.user,data=request.POST)
-        if form.is_valid():
-            form.save()
-            update_session_auth_hash(request, form.user)
-            messages.success(request, "Contraseña cambiada correctamente")
-            return redirect('mi_perfil')
-    else:
-        form = PasswordChangeForm(user=request.user)
-
-    return render(request,'perfil/cambiar_pass.html',{'form': form})
-
-@login_required
-def eliminar_perfil(request):
-
-    #Bloquear al superusuario ANTES de procesar el POST
-    if request.user.is_superuser:
-        return render(request, 'perfil/eliminar_perfil.html', {
-            "error": "Un superusuario no puede eliminar su propia cuenta."
-        })
-
-    if request.method == "POST":
-        texto = request.POST.get("confirmacion", "")
-        if texto == "CONFIRMAR":
-            user = request.user       
-            logout(request)
-            user.delete()
-            return redirect('registrarse')
-        
-        return render (request, 'perfil/eliminar_perfil.html',{
-            "error": "Debes escribir la palabra CONFIRMAR exactamente"
-        })
-    return render(request,'perfil/eliminar_perfil.html')
-
-def registrarse(request):
-    if request.method == 'GET': #Si el request pide datos:
-        return render(request, 'auth/registrarse.html', {
-            'form': UserCreationForm()
-        })
-
-    form = UserCreationForm(request.POST)
-    
-    if form.is_valid(): #si el formulario es válido, ENVÍA datos
-        user = form.save()
-        login(request, user)
-        return redirect('inicio')
-
-    return render(request, 'auth/registrarse.html', {
-        'form': form, 
-    })
-
-@login_required
-def cerrar_sesion(request):
-    logout(request)
-    return redirect('iniciar_sesion')
-
-def iniciar_sesion(request):
-    if request.method == 'GET': #Si el request pide datos:
-        return render(request, 'auth/iniciar_sesion.html', {
-        })
-    else: #Al ser POST, autenticamos datos del formulario
-        user = authenticate(request, 
-                            username=request.POST.get('username'), 
-                            password=request.POST.get('password'))
-        if user is None: #Si no hay usuario que coincida, re-enviamos la página pero esta vez con la clave 'error'
-            return render(request, 'auth/iniciar_sesion.html', {
-                'error': 'El usuario o contraseña son incorrectos.'
-            })
-        else:
-            login(request,user)
-            return redirect('inicio')
 
 @login_required
 def crear_cita(request):
@@ -301,80 +193,3 @@ def filtrar_personalizado(request):
         }
     )
     
-@login_required
-def calendario(request):
-    meses = [(1, "Enero"),(2, "Febrero"),(3, "Marzo"),(4, "Abril"),
-    (5, "Mayo"),(6, "Junio"),(7, "Julio"),(8, "Agosto"),
-    (9, "Septiembre"),(10, "Octubre"),(11, "Noviembre"),(12, "Diciembre"),]
-    
-    
-    mes = request.GET.get("mes")
-    año = request.GET.get("año")
-    
-    if not mes or not año: #Si aún no hay mes y año seleccionado, por defecto damos la fecha actual
-        hoy = date.today()
-        mes = hoy.month
-        año = hoy.year
-    else:
-        mes = int(mes)
-        año = int(año)
-
-    año = max(2025,min(año,2040))
-    
-    inicio_mes = date(año, mes, 1)
-    ultimo_dia = calendar.monthrange(año, mes)[1]
-    fin_del_mes = date(año, mes, ultimo_dia)
-
-    disponibilidad = DisponibilidadDia.objects.filter(fecha__range=(inicio_mes,fin_del_mes))
-    disp_dia = {d.fecha: d.horarios for d in disponibilidad}
-
-    citas_del_mes = Cita.objects.filter(fecha__range=(inicio_mes,fin_del_mes))
-
-    hoy = date.today()
-
-    ocupadas = {} #Creamos un diccionario que va a contener tuplas con la fecha y hora exacta de cada una
-    
-    for cita in citas_del_mes:
-        ocupadas[(cita.fecha, cita.hora)] = True
-        
-    semanas = generar_calendario(año, mes)
-    
-    return render(request,'calendario/calendario.html',{'semanas': semanas, 'mes': mes, 'año': año, 'meses': meses, 'disponibilidad': disp_dia, 'ocupadas': ocupadas, 'hoy': hoy})
-
-@login_required
-def editar_turnos(request):
-
-    if not request.user.is_superuser:
-        return HttpResponseForbidden("Solo un superusuario puede editar los turnos.")
-    
-    fecha = request.GET.get('fecha')
-    instancia = DisponibilidadDia.objects.filter(fecha=fecha).first() if fecha else None
-
-    # --- POST: guardar cambios o crear nueva disponibilidad ---
-    if request.method == "POST":
-        if instancia:  
-            # Editar la instancia existente
-            form = TurnosForm(request.POST, instance=instancia)
-        else:
-            # Crear una nueva instancia
-            form = TurnosForm(request.POST)
-
-        if form.is_valid():
-            form.save()
-            return redirect('calendario')
-
-    # --- GET: mostrar formulario para editar o crear ---
-    else:
-        if instancia:  
-            # Mostrar instancia existente
-            form = TurnosForm(instance=instancia)
-        elif fecha:  
-            # Mostrar fecha predeterminada si no existe instancia
-            form = TurnosForm(initial={'fecha': fecha})
-        else:
-            # No hay fecha seleccionada → formulario vacío
-            form = TurnosForm()
-
-    return render(request, 'calendario/editar_turnos.html', {
-        'form': form
-    })

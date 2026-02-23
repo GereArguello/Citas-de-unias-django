@@ -1,8 +1,7 @@
 from django import forms
-from .models import Cita, Profile, DisponibilidadDia
+from .models import Cita
 from datetime import date, datetime
-from django.contrib.auth.models import User
-import re
+from Turnos.models import DisponibilidadDia
 
 
 class CitaForm(forms.ModelForm):
@@ -143,83 +142,3 @@ class CitaForm(forms.ModelForm):
 
         return cleaned_data
     
-class UserForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name','email']
-        widgets = {
-            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'nombre'}),
-            'last_name': forms.TextInput(attrs={'class': 'form-control','placeholder':'apellido'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder':'ejemplo@mail.com'}),
-        }
-
-class ProfileForm(forms.ModelForm):
-    class Meta:
-        model = Profile
-        fields = ['telefono']
-        widgets = {
-            'telefono': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'+52 xxx xxx xxxx'}),
-        }
-    def clean_telefono(self):
-        telefono = self.cleaned_data['telefono']
-
-        if not telefono:
-            telefono = ""
-            return telefono
-        
-        telefono = telefono.strip()
-
-        telefono_num = re.sub(r"\D","", telefono) #Dejar solo números
-
-        if len(telefono_num) < 8 or len(telefono_num) > 14 :
-            raise forms.ValidationError("Teléfono inválido")
-        return telefono_num
-    
-class TurnosForm(forms.ModelForm):
-
-    horario1 = forms.TimeField(required=False, widget=forms.TimeInput(attrs={'type': 'time'}))
-    horario2 = forms.TimeField(required=False, widget=forms.TimeInput(attrs={'type': 'time'}))
-    horario3 = forms.TimeField(required=False, widget=forms.TimeInput(attrs={'type': 'time'}))
-    horario4 = forms.TimeField(required=False, widget=forms.TimeInput(attrs={'type': 'time'}))
-    horario5 = forms.TimeField(required=False, widget=forms.TimeInput(attrs={'type': 'time'}))
-
-    class Meta:
-        model = DisponibilidadDia
-        fields = ['fecha']
-        widgets = {
-            'fecha': forms.DateInput(attrs={'class':'form-control','type': 'date','onchange': 'cambiar_fecha(this.value)'}, format='%Y-%m-%d'),
-        }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # Ajustar label dinámicamente
-        for i in range(1, 6):
-            self.fields[f"horario{i}"].label = f"Horario {i}"
-
-        if self.instance and self.instance.horarios:
-            horarios = self.instance.horarios  # lista ejemplo ["10:00", "11:00"]
-
-            # Prellenar por índice
-            for i, hora in enumerate(horarios):
-                if i < 5:
-                    self.fields[f"horario{i+1}"].initial = hora    
-
-    def clean(self):
-        cleaned = super().clean()
-
-        horarios = []
-        for i in range(1, 6):
-            valor = cleaned.get(f"horario{i}")
-            if valor:
-                horarios.append(valor.strftime("%H:%M"))
-
-        cleaned["horarios"] = horarios
-        return cleaned
-    
-    def save(self, commit=True):
-        instancia = super().save(commit=False)
-        instancia.horarios = self.cleaned_data["horarios"]
-        if commit:
-            instancia.save()
-        return instancia
