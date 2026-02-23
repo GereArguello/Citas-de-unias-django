@@ -8,6 +8,7 @@ class TurnosForm(forms.ModelForm):
     horario3 = forms.TimeField(required=False, widget=forms.TimeInput(attrs={'type': 'time'}))
     horario4 = forms.TimeField(required=False, widget=forms.TimeInput(attrs={'type': 'time'}))
     horario5 = forms.TimeField(required=False, widget=forms.TimeInput(attrs={'type': 'time'}))
+    horario6 = forms.TimeField(required=False, widget=forms.TimeInput(attrs={'type': 'time'}))
 
     class Meta:
         model = DisponibilidadDia
@@ -20,7 +21,7 @@ class TurnosForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         # Ajustar label dinámicamente
-        for i in range(1, 6):
+        for i in range(1, 7):
             self.fields[f"horario{i}"].label = f"Horario {i}"
 
         if self.instance and self.instance.horarios:
@@ -28,14 +29,14 @@ class TurnosForm(forms.ModelForm):
 
             # Prellenar por índice
             for i, hora in enumerate(horarios):
-                if i < 5:
+                if i < 6:
                     self.fields[f"horario{i+1}"].initial = hora    
 
     def clean(self):
         cleaned = super().clean()
 
         horarios = []
-        for i in range(1, 6):
+        for i in range(1, 7):
             valor = cleaned.get(f"horario{i}")
             if valor:
                 horarios.append(valor.strftime("%H:%M"))

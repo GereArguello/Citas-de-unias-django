@@ -6,9 +6,10 @@ from django.dispatch import receiver
 
 class Cita (models.Model):      #Creamos una tabla
     SERVICIOS = [
-        ('Manicura', 'Manicura'), #Lista de tuplas, (como lo ves, como lo ven)
-        ('Pedicura', 'Pedicura'),
-        ('Semipermanente', 'Semipermanente'),
+        ('Gelish', 'Gelish'), #Lista de tuplas, (como lo ves, como lo ven)
+        ('Soft gel', 'Soft gel'),
+        ('Rubber', 'Rubber'),
+        ('Retiro', 'Retiro')
     ]
 
 

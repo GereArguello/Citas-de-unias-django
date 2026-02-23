@@ -95,7 +95,7 @@
 
 .calendario {
     width: 100%;
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
     border-collapse: collapse;
     table-layout: fixed; 
@@ -111,45 +111,50 @@
 }
 
 .calendario td {
-    border: 1px solid #005e0c;
-    box-shadow: 0 2px 2px rgba(38, 122, 45, 0.7) !important;
-    padding: 0;
-    height: 110px;
+  border: 1px solid #005e0c;
+  box-shadow: 0 2px 2px rgba(38, 122, 45, 0.7) !important;
+  padding: 0;
+  height: 140px;          
 }
 
 /* Cada cuadrado del calendario */
 .dia {
-    display: flex;
-    flex-direction: column;   /* Día arriba, horarios debajo */
-    justify-content: flex-start;
-    height: 130px;
-    padding: 4px;
-    position: relative;
-    align-items: stretch;     /* Permite centrar bien el contenido */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100%;           /* CLAVE: que respete el alto del td */
+  padding: 2px;           /* menos padding = más espacio */
+  box-sizing: border-box; /* CLAVE: padding no “agranda” la caja */
 }
 
-/* Número del día */
 .dia .numero {
-    font-weight: bold;
-    font-size: 0.8rem;
-    align-self: flex-start;
+  font-weight: bold;
+  font-size: 0.75rem;
+  line-height: 1;         /* más compacto */
+  margin-bottom: 2px;
 }
+
 
 /* Contenedor de horarios */
 .horarios {
-    width: 100%;
+  flex: 1;                /* CLAVE: toma el espacio restante */
+  display: flex;
+  flex-direction: column;
+  gap: 0px;               /* sin separación extra */
+  overflow: hidden;       /* evita que se desborde */
 }
+
 
 /* Centrar los horarios horizontalmente */
 .horarios p {
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;   /* CENTRA el horario dentro del cuadrado */
-    align-items: center;
-    text-align: center;
-    font-size: 0.80rem;
-    white-space: nowrap;       /* evita quiebres de línea */
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.72rem;     
+  line-height: 1;        
+  white-space: nowrap;
 }
 
 /* Estilos de días vacíos */
